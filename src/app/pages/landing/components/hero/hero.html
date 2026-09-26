@@ -1,1 +1,115 @@
-<p>hero works!</p>
+<section class="bg-(--bg-primary) text-(--text-primary) transition-colors duration-200">
+  <div
+    class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col items-center justify-center gap-16 px-6 py-12 lg:flex-row lg:px-8"
+  >
+    <!-- left content -->
+    <div class="max-w-2xl flex-1">
+      <div
+        class="mb-6 inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--bg-secondary) px-4 py-2 text-sm text-(--text-secondary)"
+      >
+        <span class="h-2 w-2 rounded-full bg-(--accent)"></span>
+        Personal Finance Tracker
+      </div>
+
+      <h1 class="text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
+        Take control of
+        <span class="text-(--accent)">your money</span>.
+        <br />
+        Build smarter financial habits.
+      </h1>
+
+      <p class="mt-8 max-w-xl text-lg leading-8 text-(--text-secondary)">
+        Track expenses, manage budgets, and monitor your financial progress through a clean,
+        intuitive dashboard designed for everyday use.
+      </p>
+
+      <div class="mt-10 flex flex-wrap gap-4">
+        <button
+          class="rounded-xl bg-(--accent) px-6 py-3 font-semibold text-white transition-all duration-200 hover:bg-(--accent-hover)"
+        >
+          Get Started
+        </button>
+
+        <button
+          class="rounded-xl border border-(--border) bg-(--bg-secondary) px-6 py-3 font-semibold text-(--text-primary) transition-all duration-200 hover:border-(--accent)"
+        >
+          View Demo
+        </button>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-8 text-sm text-(--text-secondary)">
+        <div>
+          <p class="text-2xl font-bold text-(--text-primary)">10k+</p>
+          <p>Transactions Tracked</p>
+        </div>
+
+        <div>
+          <p class="text-2xl font-bold text-(--text-primary)">99%</p>
+          <p>Budget Visibility</p>
+        </div>
+
+        <div>
+          <p class="text-2xl font-bold text-(--text-primary)">24/7</p>
+          <p>Access Anywhere</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- right side dashboard preview -->
+    <div class="flex w-full flex-1 justify-center">
+      <div
+        class="w-full max-w-sm rounded-3xl border border-(--border) bg-(--bg-secondary) p-6 shadow-xl sm:max-w-md"
+      >
+        <!-- balance -->
+        <div class="rounded-2xl bg-(--accent) p-5 text-white">
+          <p class="text-sm opacity-80">Total Balance</p>
+          <h2 class="mt-2 text-4xl font-bold">$12,480</h2>
+
+          <div class="mt-4 flex justify-between text-sm">
+            <div>
+              <p class="opacity-80">Income</p>
+              <p class="font-semibold">$4,250</p>
+            </div>
+
+            <div>
+              <p class="opacity-80">Expenses</p>
+              <p class="font-semibold">$1,840</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- budget progress -->
+        <div class="mt-6">
+          <div class="mb-2 flex justify-between text-sm">
+            <span>Monthly Budget</span>
+            <span>72%</span>
+          </div>
+
+          <div class="h-3 rounded-full bg-(--border)">
+            <div class="h-3 w-[72%] rounded-full bg-(--accent)"></div>
+          </div>
+        </div>
+
+        <!-- recent transactions -->
+        <div class="mt-6 space-y-3">
+          <h3 class="font-semibold">Recent Transactions</h3>
+
+          <div class="flex items-center justify-between rounded-xl bg-(--bg-primary) p-3">
+            <span>Coffee</span>
+            <span class="text-(--danger)">-$2.50</span>
+          </div>
+
+          <div class="flex items-center justify-between rounded-xl bg-(--bg-primary) p-3">
+            <span>Salary</span>
+            <span class="text-(--success)">+$350</span>
+          </div>
+
+          <div class="flex items-center justify-between rounded-xl bg-(--bg-primary) p-3">
+            <span>Groceries</span>
+            <span class="text-(--danger)">-$150</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

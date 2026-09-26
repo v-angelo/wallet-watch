@@ -34,10 +34,20 @@
   --danger: #ef7070;
 }
 
-body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition:
-    background-color 200ms ease,
-    color 200ms ease;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition:
+      background-color 300ms ease,
+      color 300ms ease;
+  }
+
+  button {
+    cursor: pointer;
+  }
 }
