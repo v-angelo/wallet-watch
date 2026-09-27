@@ -1,1 +1,45 @@
-<p>footer works!</p>
+<footer class="border-t border-(--border) bg-(--bg-secondary) text-(--text-primary)">
+  <div class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+    <div class="flex flex-col items-center justify-between gap-8 md:flex-row">
+      <!-- brand -->
+      <div>
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-lg font-bold text-white"
+          >
+            W
+          </div>
+
+          <span class="text-xl font-bold"> Wallet<span class="text-(--accent)">Watch</span> </span>
+        </div>
+
+        <p class="mt-3 max-w-sm text-sm text-(--text-secondary)">
+          Track expenses, manage budgets, and build healthier financial habits.
+        </p>
+      </div>
+
+      <!-- links -->
+      <div class="flex flex-wrap items-center gap-6 text-sm">
+        <a href="#features" class="text-(--text-secondary) transition-colors hover:text-(--accent)">
+          Features
+        </a>
+
+        <a href="#about" class="text-(--text-secondary) transition-colors hover:text-(--accent)">
+          About
+        </a>
+
+        <a href="#" class="text-(--text-secondary) transition-colors hover:text-(--accent)">
+          Privacy
+        </a>
+
+        <a href="#" class="text-(--text-secondary) transition-colors hover:text-(--accent)">
+          GitHub
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-10 border-t border-(--border) pt-6 text-center text-sm text-(--text-secondary)">
+      © {{ currentYear }} WalletWatch. All rights reserved.
+    </div>
+  </div>
+</footer>
