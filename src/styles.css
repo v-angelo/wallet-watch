@@ -49,3 +49,74 @@
     cursor: pointer;
   }
 }
+
+@theme {
+  /* animations */
+  --animate-fade-up: fade-up 0.7s ease-out both;
+
+  --animate-fade-right: fade-right 0.7s ease-out both;
+
+  --animate-fade-left: fade-left 0.7s ease-out both;
+}
+
+@layer utilities {
+  /* keyframes */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-right {
+    from {
+      opacity: 0;
+      transform: translateX(-24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fade-left {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* animation delays */
+  .animate-delay-150 {
+    animation-delay: 150ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-450 {
+    animation-delay: 450ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
