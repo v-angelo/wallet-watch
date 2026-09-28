@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { LucideWallet, LucideChartPie, LucideTarget, LucideTrendingUp } from '@lucide/angular';
+import { ScrollAnimateDirective } from '../../../../shared/directives/scroll-animate.directive';
 
 type FeatureIcon = 'wallet' | 'chart' | 'target' | 'trending';
 
@@ -12,7 +13,7 @@ interface Feature {
 
 @Component({
   selector: 'app-features',
-  imports: [LucideWallet, LucideChartPie, LucideTarget, LucideTrendingUp],
+  imports: [LucideWallet, LucideChartPie, LucideTarget, LucideTrendingUp, ScrollAnimateDirective],
   templateUrl: './features.html',
   styleUrl: './features.css',
 })

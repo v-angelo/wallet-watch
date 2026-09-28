@@ -109,6 +109,19 @@
   .animate-delay-450 {
     animation-delay: 450ms;
   }
+
+  .animate-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  /* custom classes */
+  .scroll-animate {
+    animation-play-state: paused;
+  }
+
+  .scroll-animate.scroll-visible {
+    animation-play-state: running;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

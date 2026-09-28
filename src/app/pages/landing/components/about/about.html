@@ -7,24 +7,34 @@
       <!-- left content -->
       <div>
         <span
-          class="inline-flex items-center rounded-full border border-(--border) bg-(--bg-secondary) px-4 py-2 text-sm text-(--text-secondary)"
+          appScrollAnimate
+          class="inline-flex animate-fade-right items-center rounded-full border border-(--border) bg-(--bg-secondary) px-4 py-2 text-sm text-(--text-secondary)"
         >
           About WalletWatch
         </span>
 
-        <h2 class="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
+        <h2
+          appScrollAnimate
+          class="animate-delay-150 mt-6 animate-fade-right text-4xl font-bold tracking-tight sm:text-5xl"
+        >
           Built to make
           <span class="text-(--accent)">personal finance</span>
           simpler.
         </h2>
 
-        <p class="mt-6 text-lg leading-8 text-(--text-secondary)">
+        <p
+          appScrollAnimate
+          class="animate-delay-300 mt-6 animate-fade-right text-lg leading-8 text-(--text-secondary)"
+        >
           Managing money shouldn't require complicated spreadsheets or overwhelming financial
           software. WalletWatch helps you stay aware of your spending, build better budgeting
           habits, and keep track of your financial goals through a clean and intuitive experience.
         </p>
 
-        <p class="mt-4 text-lg leading-8 text-(--text-secondary)">
+        <p
+          appScrollAnimate
+          class="animate-delay-450 mt-4 animate-fade-right text-lg leading-8 text-(--text-secondary)"
+        >
           Whether you're monitoring daily expenses, planning monthly budgets, or working toward
           savings goals, WalletWatch provides the tools you need to understand your finances with
           confidence.
@@ -32,10 +42,15 @@
       </div>
 
       <!-- right side cards -->
-      <div class="grid gap-4 sm:grid-cols-2">
+      <div class="grid animate-fade-left gap-4 sm:grid-cols-2">
         @for (highlight of highlights; track highlight.title) {
           <div
-            class="rounded-3xl border border-(--border) bg-(--bg-secondary) p-6 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)"
+            appScrollAnimate
+            class="animate-fade-left rounded-3xl border border-(--border) bg-(--bg-secondary) p-6 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)"
+            [class.animate-delay-150]="$index === 0"
+            [class.animate-delay-300]="$index === 1"
+            [class.animate-delay-450]="$index === 2"
+            [class.animate-delay-600]="$index === 3"
           >
             <div
               class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-(--accent)/10 text-(--accent)"
