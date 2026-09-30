@@ -1,0 +1,154 @@
+<app-navbar />
+
+<div class="flex min-h-screen bg-(--bg-primary) text-(--text-primary)">
+  <!-- left section -->
+  <section
+    class="relative hidden w-1/2 overflow-hidden lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16"
+  >
+    <!-- background -->
+    <div class="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-(--accent)/10 blur-3xl"></div>
+
+    <div
+      class="absolute -right-40 -bottom-40 h-125 w-125 rounded-full bg-(--accent)/5 blur-3xl"
+    ></div>
+
+    <!-- logo -->
+    <a
+      routerLink="/"
+      class="relative z-10 w-fit animate-fade-right text-2xl font-bold tracking-tight"
+    >
+      Wallet<span class="text-(--accent)">Watch</span>
+    </a>
+
+    <!-- main content -->
+    <div class="relative z-10 max-w-xl">
+      <p
+        class="animate-delay-150 mb-4 animate-fade-right text-sm font-semibold tracking-[0.2em] text-(--accent) uppercase"
+      >
+        Welcome back
+      </p>
+
+      <h1
+        class="animate-delay-300 animate-fade-right text-4xl leading-tight font-bold tracking-tight xl:text-5xl"
+      >
+        Keep an eye on your money.
+      </h1>
+
+      <p
+        class="animate-delay-450 mt-6 max-w-lg animate-fade-right text-lg leading-relaxed text-(--text-secondary)"
+      >
+        Stay on top of your spending, budgets, and savings goals from one simple dashboard.
+      </p>
+
+      <!-- feature list -->
+      <div class="animate-delay-600 mt-10 animate-fade-right space-y-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+          >
+            ✓
+          </div>
+
+          <span class="text-(--text-secondary)"> Track your everyday spending </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+          >
+            ✓
+          </div>
+
+          <span class="text-(--text-secondary)"> Keep your budgets organized </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+          >
+            ✓
+          </div>
+
+          <span class="text-(--text-secondary)"> Work towards your financial goals </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom text -->
+    <p class="animate-delay-600 relative z-10 animate-fade-right text-sm text-(--text-secondary)">
+      Your finances. Your goals. Your watch.
+    </p>
+  </section>
+
+  <!-- right section -->
+  <section class="flex w-full items-center justify-center px-6 py-12 sm:px-8 lg:w-1/2 lg:px-12">
+    <div class="w-full max-w-md animate-fade-left">
+      <!-- mobile logo -->
+      <a routerLink="/" class="mb-10 block text-center text-2xl font-bold tracking-tight lg:hidden">
+        Wallet<span class="text-(--accent)">Watch</span>
+      </a>
+
+      <!-- heading -->
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold tracking-tight">Welcome back</h2>
+
+        <p class="mt-2 text-(--text-secondary)">Sign in to continue to your account.</p>
+      </div>
+
+      <!-- login form -->
+      <form class="space-y-5">
+        <!-- email -->
+        <div>
+          <label for="email" class="mb-2 block text-sm font-medium"> Email </label>
+
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+          />
+        </div>
+
+        <!-- password -->
+        <div>
+          <div class="mb-2 flex items-center justify-between">
+            <label for="password" class="text-sm font-medium"> Password </label>
+
+            <a
+              href="#"
+              class="text-sm text-(--accent) transition-colors hover:text-(--accent-hover)"
+            >
+              Forgot password?
+            </a>
+          </div>
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+          />
+        </div>
+
+        <!-- submit -->
+        <button
+          type="submit"
+          class="w-full rounded-xl bg-(--accent) py-3.5 font-semibold text-black transition duration-200 hover:bg-(--accent-hover)"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <!-- register -->
+      <p class="mt-8 text-center text-sm text-(--text-secondary)">
+        Don't have an account?
+        <a
+          routerLink="/register"
+          class="ml-1 font-medium text-(--accent) hover:text-(--accent-hover)"
+        >
+          Create one
+        </a>
+      </p>
+    </div>
+  </section>
+</div>

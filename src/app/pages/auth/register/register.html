@@ -1,0 +1,169 @@
+<app-navbar />
+
+<div class="flex min-h-screen bg-(--bg-primary) text-(--text-primary)">
+  <!-- left section -->
+  <section
+    class="relative hidden w-1/2 overflow-hidden lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16"
+  >
+    <!-- background -->
+    <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-(--accent)/10 blur-3xl"></div>
+
+    <div
+      class="absolute -bottom-40 -left-40 h-125 w-125 rounded-full bg-(--accent)/5 blur-3xl"
+    ></div>
+
+    <!-- logo -->
+    <a
+      routerLink="/"
+      class="relative z-10 w-fit animate-fade-left text-2xl font-bold tracking-tight"
+    >
+      Wallet<span class="text-(--accent)">Watch</span>
+    </a>
+
+    <!-- main content -->
+    <div class="relative z-10 max-w-xl">
+      <p
+        class="animate-delay-150 mb-4 animate-fade-left text-sm font-semibold tracking-[0.2em] text-(--accent) uppercase"
+      >
+        Take control
+      </p>
+
+      <h1
+        class="animate-delay-300 animate-fade-left text-4xl leading-tight font-bold tracking-tight xl:text-5xl"
+      >
+        Build better habits with your money.
+      </h1>
+
+      <p
+        class="animate-delay-450 mt-6 max-w-lg animate-fade-left text-lg leading-relaxed text-(--text-secondary)"
+      >
+        WalletWatch gives you a clear picture of where your money goes and helps you plan where it
+        should go next.
+      </p>
+
+      <!-- feature list -->
+      <div class="animate-delay-600 mt-10 animate-fade-left space-y-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+          >
+            ✓
+          </div>
+
+          <span class="text-(--text-secondary)"> Understand your spending habits </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+          >
+            ✓
+          </div>
+
+          <span class="text-(--text-secondary)"> Set goals that matter to you </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+          >
+            ✓
+          </div>
+
+          <span class="text-(--text-secondary)"> Make every financial decision count </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom text -->
+    <p class="animate-delay-600 relative z-10 animate-fade-left text-sm text-(--text-secondary)">
+      Start today. Watch your progress grow.
+    </p>
+  </section>
+
+  <!-- right section -->
+  <section class="flex w-full items-center justify-center px-6 py-12 sm:px-8 lg:w-1/2 lg:px-12">
+    <div class="w-full max-w-md animate-fade-left">
+      <!-- mobile logo -->
+      <a routerLink="/" class="mb-10 block text-center text-2xl font-bold tracking-tight lg:hidden">
+        Wallet<span class="text-(--accent)">Watch</span>
+      </a>
+
+      <!-- heading -->
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold tracking-tight">Create your account</h2>
+
+        <p class="mt-2 text-(--text-secondary)">Start taking control of your finances today.</p>
+      </div>
+
+      <!-- register form -->
+      <form class="space-y-5">
+        <!-- name -->
+        <div>
+          <label for="name" class="mb-2 block text-sm font-medium"> Name </label>
+
+          <input
+            id="name"
+            type="text"
+            placeholder="Your name"
+            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+          />
+        </div>
+
+        <!-- email -->
+        <div>
+          <label for="email" class="mb-2 block text-sm font-medium"> Email </label>
+
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+          />
+        </div>
+
+        <!-- password -->
+        <div>
+          <label for="password" class="mb-2 block text-sm font-medium"> Password </label>
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Create a password"
+            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+          />
+        </div>
+
+        <!-- confirm password -->
+        <div>
+          <label for="confirmPassword" class="mb-2 block text-sm font-medium">
+            Confirm Password
+          </label>
+
+          <input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm your password"
+            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+          />
+        </div>
+
+        <!-- submit -->
+        <button
+          type="submit"
+          class="w-full rounded-xl bg-(--accent) py-3.5 font-semibold text-black transition duration-200 hover:bg-(--accent-hover)"
+        >
+          Create Account
+        </button>
+      </form>
+
+      <!-- login -->
+      <p class="mt-8 text-center text-sm text-(--text-secondary)">
+        Already have an account?
+        <a routerLink="/login" class="ml-1 font-medium text-(--accent) hover:text-(--accent-hover)">
+          Sign in
+        </a>
+      </p>
+    </div>
+  </section>
+</div>
