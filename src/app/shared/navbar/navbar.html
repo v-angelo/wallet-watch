@@ -5,6 +5,7 @@
     <!-- logo -->
     <a
       href="#"
+      (click)="goHome(); $event.preventDefault()"
       class="flex items-center gap-2 text-xl font-bold tracking-tight"
       (click)="closeMobileMenu()"
     >
@@ -19,19 +20,21 @@
 
     <!-- desktop navigation -->
     <div class="hidden items-center gap-8 md:flex">
-      <a
-        href="#features"
-        class="text-sm font-medium text-(--text-secondary) transition-colors hover:text-(--text-primary)"
-      >
-        Features
-      </a>
+      @if (isLandingPage()) {
+        <a
+          href="#features"
+          class="text-sm font-medium text-(--text-secondary) transition-colors hover:text-(--text-primary)"
+        >
+          Features
+        </a>
 
-      <a
-        href="#about"
-        class="text-sm font-medium text-(--text-secondary) transition-colors hover:text-(--text-primary)"
-      >
-        About
-      </a>
+        <a
+          href="#about"
+          class="text-sm font-medium text-(--text-secondary) transition-colors hover:text-(--text-primary)"
+        >
+          About
+        </a>
+      }
 
       <!-- theme toggle -->
       <button
@@ -50,14 +53,14 @@
       </button>
 
       <a
-        href="/login"
+        routerLink="/login"
         class="text-sm font-semibold text-(--text-secondary) transition-colors hover:text-(--text-primary)"
       >
         Login
       </a>
 
       <a
-        href="/register"
+        routerLink="/register"
         class="rounded-lg bg-(--accent) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-(--accent-hover) hover:shadow-md"
       >
         Get Started
@@ -111,26 +114,30 @@
     <div class="overflow-hidden">
       <div class="border-t border-(--border) bg-(--bg-secondary) px-5 py-5">
         <div class="mx-auto flex max-w-7xl flex-col gap-1">
-          <a
-            href="#features"
-            (click)="closeMobileMenu()"
-            class="rounded-lg px-3 py-3 text-sm font-medium text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
-          >
-            Features
-          </a>
+          @if (isLandingPage()) {
+            <a
+              href="#features"
+              (click)="closeMobileMenu()"
+              class="rounded-lg px-3 py-3 text-sm font-medium text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
+            >
+              Features
+            </a>
+
+            <a
+              href="#about"
+              (click)="closeMobileMenu()"
+              class="rounded-lg px-3 py-3 text-sm font-medium text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
+            >
+              About
+            </a>
+          }
+
+          @if (isLandingPage()) {
+            <div class="my-2 border-t border-(--border)"></div>
+          }
 
           <a
-            href="#about"
-            (click)="closeMobileMenu()"
-            class="rounded-lg px-3 py-3 text-sm font-medium text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
-          >
-            About
-          </a>
-
-          <div class="my-2 border-t border-(--border)"></div>
-
-          <a
-            href="/login"
+            routerLink="/login"
             (click)="closeMobileMenu()"
             class="rounded-lg px-3 py-3 text-sm font-semibold text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
           >
@@ -138,7 +145,7 @@
           </a>
 
           <a
-            href="/register"
+            routerLink="/register"
             (click)="closeMobileMenu()"
             class="mt-1 rounded-lg bg-(--accent) px-4 py-3 text-center text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-hover)"
           >

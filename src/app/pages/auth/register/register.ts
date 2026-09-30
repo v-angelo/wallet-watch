@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { Navbar } from '../../landing/components/navbar/navbar';
+import { Navbar } from '../../../shared/navbar/navbar';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  imports: [Navbar],
+  imports: [Navbar, RouterLink],
   selector: 'app-register',
   styleUrl: './register.css',
   templateUrl: './register.html',

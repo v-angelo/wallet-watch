@@ -1,10 +1,8 @@
 <app-navbar />
 
-<div class="flex min-h-screen bg-(--bg-primary) text-(--text-primary)">
+<section class="flex min-h-[calc(100vh-65px)] bg-(--bg-primary) text-(--text-primary)">
   <!-- left section -->
-  <section
-    class="relative hidden w-1/2 overflow-hidden lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16"
-  >
+  <section class="relative hidden w-1/2 overflow-hidden lg:flex lg:items-center lg:px-12 xl:px-16">
     <!-- background -->
     <div class="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-(--accent)/10 blur-3xl"></div>
 
@@ -12,16 +10,8 @@
       class="absolute -right-40 -bottom-40 h-125 w-125 rounded-full bg-(--accent)/5 blur-3xl"
     ></div>
 
-    <!-- logo -->
-    <a
-      routerLink="/"
-      class="relative z-10 w-fit animate-fade-right text-2xl font-bold tracking-tight"
-    >
-      Wallet<span class="text-(--accent)">Watch</span>
-    </a>
-
     <!-- main content -->
-    <div class="relative z-10 max-w-xl">
+    <div class="relative z-10 w-full max-w-xl">
       <p
         class="animate-delay-150 mb-4 animate-fade-right text-sm font-semibold tracking-[0.2em] text-(--accent) uppercase"
       >
@@ -44,7 +34,7 @@
       <div class="animate-delay-600 mt-10 animate-fade-right space-y-4">
         <div class="flex items-center gap-3">
           <div
-            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
           >
             ✓
           </div>
@@ -54,7 +44,7 @@
 
         <div class="flex items-center gap-3">
           <div
-            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
           >
             ✓
           </div>
@@ -64,7 +54,7 @@
 
         <div class="flex items-center gap-3">
           <div
-            class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/10 text-(--accent)"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--accent)/10 text-(--text-secondary)"
           >
             ✓
           </div>
@@ -72,19 +62,19 @@
           <span class="text-(--text-secondary)"> Work towards your financial goals </span>
         </div>
       </div>
-    </div>
 
-    <!-- bottom text -->
-    <p class="animate-delay-600 relative z-10 animate-fade-right text-sm text-(--text-secondary)">
-      Your finances. Your goals. Your watch.
-    </p>
+      <!-- bottom text -->
+      <p class="animate-delay-600 mt-12 animate-fade-right text-sm text-(--text-secondary)">
+        Your finances. Your goals. Your watch.
+      </p>
+    </div>
   </section>
 
   <!-- right section -->
   <section class="flex w-full items-center justify-center px-6 py-12 sm:px-8 lg:w-1/2 lg:px-12">
     <div class="w-full max-w-md animate-fade-left">
       <!-- mobile logo -->
-      <a routerLink="/" class="mb-10 block text-center text-2xl font-bold tracking-tight lg:hidden">
+      <a routerLink="/" class="mb-8 block text-center text-2xl font-bold tracking-tight lg:hidden">
         Wallet<span class="text-(--accent)">Watch</span>
       </a>
 
@@ -142,6 +132,7 @@
       <!-- register -->
       <p class="mt-8 text-center text-sm text-(--text-secondary)">
         Don't have an account?
+
         <a
           routerLink="/register"
           class="ml-1 font-medium text-(--accent) hover:text-(--accent-hover)"
@@ -151,4 +142,4 @@
       </p>
     </div>
   </section>
-</div>
+</section>
