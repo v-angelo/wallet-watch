@@ -87,7 +87,7 @@
       </div>
 
       <!-- register form -->
-      <form class="space-y-4">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
         <!-- name -->
         <div>
           <label for="name" class="mb-2 block text-sm font-medium"> Name </label>
@@ -96,8 +96,21 @@
             id="name"
             type="text"
             placeholder="Your name"
+            formControlName="username"
             class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
           />
+
+          @if (f.username.touched && f.username.errors) {
+            <p class="mt-1 text-sm text-(--danger)">
+              @if (f.username.errors['required']) {
+                Name is required.
+              } @else if (f.username.errors['whitespace']) {
+                Name cannot start or end with a space.
+              } @else if (f.username.errors['minlength']) {
+                Name must be at least 2 characters.
+              }
+            </p>
+          }
         </div>
 
         <!-- email -->
@@ -107,9 +120,22 @@
           <input
             id="email"
             type="email"
+            formControlName="email"
             placeholder="you@example.com"
             class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
           />
+
+          @if (f.email.touched && f.email.errors) {
+            <p class="mt-1 text-sm text-(--danger)">
+              @if (f.email.errors['required']) {
+                Email is required.
+              }
+
+              @if (f.email.errors['email']) {
+                Please enter a valid email address.
+              }
+            </p>
+          }
         </div>
 
         <!-- password -->
@@ -119,9 +145,22 @@
           <input
             id="password"
             type="password"
+            formControlName="password"
             placeholder="Create a password"
             class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
           />
+
+          @if (f.password.touched && f.password.errors) {
+            <p class="mt-1 text-sm text-(--danger)">
+              @if (f.password.errors['required']) {
+                Password is required.
+              }
+
+              @if (f.password.errors['minlength']) {
+                Password must be at least 6 characters.
+              }
+            </p>
+          }
         </div>
 
         <!-- confirm password -->
@@ -133,17 +172,23 @@
           <input
             id="confirmPassword"
             type="password"
+            formControlName="confirmPassword"
             placeholder="Confirm your password"
             class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
           />
+
+          @if (registerForm.hasError('passwordMismatch') && f.confirmPassword.touched) {
+            <p class="mt-1 text-sm text-(--danger)">Passwords do not match.</p>
+          }
         </div>
 
         <!-- submit -->
         <button
           type="submit"
-          class="w-full rounded-xl bg-(--accent) py-3.5 font-semibold text-black transition duration-200 hover:bg-(--accent-hover)"
+          [disabled]="isLoading()"
+          class="w-full rounded-xl bg-(--accent) py-3.5 font-semibold text-black transition duration-200 hover:bg-(--accent-hover) disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Create Account
+          {{ isLoading() ? 'Creating Account...' : 'Create Account' }}
         </button>
       </form>
 

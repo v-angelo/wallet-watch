@@ -1,0 +1,35 @@
+<div class="fixed top-5 right-5 z-50 flex w-[calc(100%-2.5rem)] max-w-sm flex-col gap-3">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <article
+      class="flex items-start gap-3 rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 shadow-lg"
+    >
+      <!-- icon -->
+      <div class="mt-0.5 shrink-0">
+        @if (toast.type === 'success') {
+          <span class="text-(--success)">✓</span>
+        } @else if (toast.type === 'error') {
+          <span class="text-(--danger)">✕</span>
+        } @else if (toast.type === 'warning') {
+          <span class="text-(--accent)">!</span>
+        } @else {
+          <span class="text-(--accent)">i</span>
+        }
+      </div>
+
+      <!-- message -->
+      <p class="flex-1 text-sm leading-relaxed text-(--text-primary)">
+        {{ toast.message }}
+      </p>
+
+      <!-- close -->
+      <button
+        type="button"
+        class="shrink-0 text-lg leading-none text-(--text-secondary) transition hover:text-(--text-primary)"
+        (click)="toastService.remove(toast.id)"
+        aria-label="Close notification"
+      >
+        ×
+      </button>
+    </article>
+  }
+</div>
