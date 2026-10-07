@@ -86,7 +86,7 @@
       </div>
 
       <!-- login form -->
-      <form class="space-y-5">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
         <!-- email -->
         <div>
           <label for="email" class="mb-2 block text-sm font-medium"> Email </label>
@@ -94,9 +94,22 @@
           <input
             id="email"
             type="email"
+            formControlName="email"
             placeholder="you@example.com"
             class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
           />
+
+          @if (f.email.touched && f.email.invalid) {
+            <p class="mt-1 text-sm text-(--danger)">
+              @if (f.email.errors?.['required']) {
+                Email is required.
+              } @else if (f.email.errors?.['whitespace']) {
+                Email cannot be empty spaces.
+              } @else if (f.email.errors?.['email']) {
+                Please enter a valid email address.
+              }
+            </p>
+          }
         </div>
 
         <!-- password -->
@@ -104,28 +117,40 @@
           <div class="mb-2 flex items-center justify-between">
             <label for="password" class="text-sm font-medium"> Password </label>
 
-            <a
-              href="#"
+            <button
+              type="button"
               class="text-sm text-(--accent) transition-colors hover:text-(--accent-hover)"
             >
               Forgot password?
-            </a>
+            </button>
           </div>
 
           <input
             id="password"
             type="password"
+            formControlName="password"
             placeholder="Enter your password"
             class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
           />
+
+          @if (f.password.touched && f.password.invalid) {
+            <p class="mt-1 text-sm text-(--danger)">
+              @if (f.password.errors?.['required']) {
+                Password is required.
+              } @else if (f.password.errors?.['whitespace']) {
+                Password cannot be empty spaces.
+              }
+            </p>
+          }
         </div>
 
         <!-- submit -->
         <button
           type="submit"
-          class="w-full rounded-xl bg-(--accent) py-3.5 font-semibold text-black transition duration-200 hover:bg-(--accent-hover)"
+          [disabled]="isLoading()"
+          class="w-full rounded-xl bg-(--accent) py-3.5 font-semibold text-black transition duration-200 hover:bg-(--accent-hover) disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Sign In
+          {{ isLoading() ? 'Signing In...' : 'Sign In' }}
         </button>
       </form>
 

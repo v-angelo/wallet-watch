@@ -2,59 +2,17 @@ import { Component, inject, signal } from '@angular/core';
 import { Navbar } from '../../../shared/navbar/navbar';
 import { Router, RouterLink } from '@angular/router';
 
-import {
-  AbstractControl,
-  FormBuilder,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { finalize } from 'rxjs';
 
-const noWhitespaceValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  const value = control.value;
-
-  if (typeof value !== 'string') {
-    return null;
-  }
-
-  return value.trim().length === 0 ? { whitespace: true } : null;
-};
-
-const nameValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  const value = control.value;
-
-  if (typeof value !== 'string') {
-    return null;
-  }
-
-  const trimmedValue = value.trim();
-
-  if (value !== trimmedValue) {
-    return { whitespace: true };
-  }
-
-  if (trimmedValue.length < 2) {
-    return { minlength: true };
-  }
-
-  return null;
-};
-
-const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  const password = control.get('password')?.value;
-  const confirmPassword = control.get('confirmPassword')?.value;
-
-  if (!password || !confirmPassword) {
-    return null;
-  }
-
-  return password === confirmPassword ? null : { passwordMismatch: true };
-};
+import {
+  nameValidator,
+  noWhitespaceValidator,
+  passwordMatchValidator,
+} from '../../../core/validators/auth.validators';
 
 @Component({
   imports: [Navbar, RouterLink, ReactiveFormsModule],

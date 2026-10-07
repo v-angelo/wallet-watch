@@ -4,6 +4,11 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 export interface User {
   _id: string;
   username: string;
@@ -16,5 +21,12 @@ export interface User {
 export interface RegisterResponse {
   success: boolean;
   message: string;
+  data: User;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  token: string;
   data: User;
 }
