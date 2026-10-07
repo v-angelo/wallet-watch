@@ -63,7 +63,7 @@ export class Login {
       )
       .subscribe({
         next: (response) => {
-          this.authService.setAuthData(response);
+          this.authService.setUser(response.data);
 
           this.toast.success(response.message);
 

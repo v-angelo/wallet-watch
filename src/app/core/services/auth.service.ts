@@ -8,6 +8,7 @@ import {
   LoginResponse,
   User,
 } from '../models/auth.model';
+
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -28,21 +29,14 @@ export class AuthService {
 
   // login
   loginAPI(data: LoginRequest) {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data, {
+      withCredentials: true,
+    });
   }
 
-  // store authentication data
-  setAuthData(response: LoginResponse): void {
-    localStorage.setItem('walletwatch-token', response.token);
-
-    localStorage.setItem('walletwatch-user', JSON.stringify(response.data));
-
-    this.user.set(response.data);
-  }
-
-  // get token
-  getToken(): string | null {
-    return localStorage.getItem('walletwatch-token');
+  // set current user
+  setUser(user: User): void {
+    this.user.set(user);
   }
 
   // get current user
@@ -50,16 +44,36 @@ export class AuthService {
     return this.user();
   }
 
-  // check authentication
-  isAuthenticated(): boolean {
-    return !!this.getToken();
+  // initialize auth
+  initializeAuth(): void {
+    this.http
+      .get<{ success: boolean; data: User }>(`${this.apiUrl}/me`, { withCredentials: true })
+      .subscribe({
+        next: (response) => {
+          this.user.set(response.data);
+        },
+        error: (error) => {
+          if (error.status === 401) {
+            this.user.set(null);
+            return;
+          }
+
+          console.error('Failed to initialize authentication:', error);
+
+          this.user.set(null);
+        },
+      });
   }
 
   // logout
   logout(): void {
-    localStorage.removeItem('walletwatch-token');
-    localStorage.removeItem('walletwatch-user');
-
-    this.user.set(null);
+    this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
+      next: () => {
+        this.user.set(null);
+      },
+      error: () => {
+        this.user.set(null);
+      },
+    });
   }
 }

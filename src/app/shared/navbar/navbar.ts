@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { LucideMenu, LucideMoon, LucideSun, LucideX } from '@lucide/angular';
 import { ThemeService } from '../../core/services/theme';
+import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
@@ -11,6 +12,8 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class Navbar {
   readonly themeService = inject(ThemeService);
+
+  readonly authService = inject(AuthService);
 
   private readonly router = inject(Router);
 
@@ -33,9 +36,16 @@ export class Navbar {
     }
   }
 
+  logout(): void {
+    this.closeMobileMenu();
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
+
   toggleMobileMenu(): void {
     this.mobileMenuOpen.update((open) => !open);
   }
+
   closeMobileMenu(): void {
     this.mobileMenuOpen.set(false);
   }

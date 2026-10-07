@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Toast } from './shared/toast/toast';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   imports: [RouterOutlet, Toast],
@@ -10,4 +11,10 @@ import { Toast } from './shared/toast/toast';
 })
 export class App {
   protected readonly title = signal('wallet-watch');
+
+  private authService = inject(AuthService);
+
+  constructor() {
+    this.authService.initializeAuth();
+  }
 }

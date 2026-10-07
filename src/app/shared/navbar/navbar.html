@@ -52,19 +52,34 @@
         }
       </button>
 
-      <a
-        routerLink="/login"
-        class="text-sm font-semibold text-(--text-secondary) transition-colors hover:text-(--text-primary)"
-      >
-        Login
-      </a>
+      <!-- auth -->
+      @if (authService.user(); as user) {
+        <span class="text-sm font-semibold text-(--text-primary)">
+          {{ user.username }}
+        </span>
 
-      <a
-        routerLink="/register"
-        class="rounded-lg bg-(--accent) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-(--accent-hover) hover:shadow-md"
-      >
-        Get Started
-      </a>
+        <button
+          type="button"
+          (click)="logout()"
+          class="rounded-lg border border-(--border) px-4 py-2.5 text-sm font-semibold text-(--text-secondary) transition-all duration-200 hover:border-(--accent) hover:text-(--accent)"
+        >
+          Logout
+        </button>
+      } @else {
+        <a
+          routerLink="/login"
+          class="text-sm font-semibold text-(--text-secondary) transition-colors hover:text-(--text-primary)"
+        >
+          Login
+        </a>
+
+        <a
+          routerLink="/register"
+          class="rounded-lg bg-(--accent) px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-(--accent-hover) hover:shadow-md"
+        >
+          Get Started
+        </a>
+      }
     </div>
 
     <!-- mobile controls -->
@@ -136,21 +151,36 @@
             <div class="my-2 border-t border-(--border)"></div>
           }
 
-          <a
-            routerLink="/login"
-            (click)="closeMobileMenu()"
-            class="rounded-lg px-3 py-3 text-sm font-semibold text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
-          >
-            Login
-          </a>
+          <!-- mobile auth -->
+          @if (authService.user(); as user) {
+            <div class="rounded-lg px-3 py-3 text-sm font-semibold text-(--text-primary)">
+              {{ user.username }}
+            </div>
 
-          <a
-            routerLink="/register"
-            (click)="closeMobileMenu()"
-            class="mt-1 rounded-lg bg-(--accent) px-4 py-3 text-center text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-hover)"
-          >
-            Get Started
-          </a>
+            <button
+              type="button"
+              (click)="logout()"
+              class="mt-1 rounded-lg border border-(--border) px-4 py-3 text-center text-sm font-semibold text-(--text-secondary) transition-all duration-200 hover:border-(--accent) hover:text-(--accent)"
+            >
+              Logout
+            </button>
+          } @else {
+            <a
+              routerLink="/login"
+              (click)="closeMobileMenu()"
+              class="rounded-lg px-3 py-3 text-sm font-semibold text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
+            >
+              Login
+            </a>
+
+            <a
+              routerLink="/register"
+              (click)="closeMobileMenu()"
+              class="mt-1 rounded-lg bg-(--accent) px-4 py-3 text-center text-sm font-semibold text-white transition-all duration-200 hover:bg-(--accent-hover)"
+            >
+              Get Started
+            </a>
+          }
         </div>
       </div>
     </div>
