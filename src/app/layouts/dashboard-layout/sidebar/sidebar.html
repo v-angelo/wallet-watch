@@ -1,0 +1,135 @@
+<!-- mobile backdrop -->
+@if (mobileOpen) {
+  <button
+    type="button"
+    aria-label="Close navigation menu"
+    class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+    (click)="closeMenu.emit()"
+  ></button>
+}
+
+<aside
+  class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-(--border) bg-(--bg-secondary) transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:translate-x-0"
+  [class.translate-x-0]="mobileOpen"
+>
+  <!-- brand -->
+  <div class="flex h-20 shrink-0 items-center justify-between px-6">
+    <a routerLink="/" class="flex items-center gap-3" (click)="closeMenu.emit()">
+      <span
+        class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-(--bg-primary)"
+      >
+        <svg lucideWallet [size]="22"></svg>
+      </span>
+
+      <span class="text-xl font-bold tracking-tight text-(--text-primary)"> WalletWatch </span>
+    </a>
+
+    <button
+      type="button"
+      class="rounded-lg p-2 text-(--text-secondary) hover:bg-(--border) lg:hidden"
+      aria-label="Close sidebar"
+      (click)="closeMenu.emit()"
+    >
+      <svg lucideX [size]="20"></svg>
+    </button>
+  </div>
+
+  <!-- navigation -->
+  <nav class="flex-1 space-y-2 overflow-y-auto px-4 py-5">
+    <p class="mb-4 px-3 text-xs font-semibold tracking-widest text-(--text-secondary) uppercase">
+      Workspace
+    </p>
+
+    <a
+      routerLink="/app/dashboard/overview"
+      routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      (click)="closeMenu.emit()"
+    >
+      <svg lucideLayoutDashboard [size]="20"></svg>
+      <span>Overview</span>
+    </a>
+
+    <a
+      routerLink="/app/dashboard/transactions"
+      routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
+      class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      (click)="closeMenu.emit()"
+    >
+      <svg lucideArrowLeftRight [size]="20"></svg>
+      <span>Transactions</span>
+    </a>
+
+    <a
+      routerLink="/app/dashboard/budgets"
+      routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
+      class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      (click)="closeMenu.emit()"
+    >
+      <svg lucideChartNoAxesColumn [size]="20"></svg>
+      <span>Budgets</span>
+    </a>
+
+    <a
+      routerLink="/app/dashboard/savings"
+      routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
+      class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      (click)="closeMenu.emit()"
+    >
+      <svg lucideTarget [size]="20"></svg>
+      <span>Savings Goals</span>
+    </a>
+
+    <a
+      routerLink="/app/dashboard/reports"
+      routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
+      class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      (click)="closeMenu.emit()"
+    >
+      <svg lucideChartPie [size]="20"></svg>
+      <span>Reports</span>
+    </a>
+
+    <div class="my-6 border-t border-(--border)"></div>
+
+    <p class="mb-4 px-3 text-xs font-semibold tracking-widest text-(--text-secondary) uppercase">
+      Preferences
+    </p>
+
+    <a
+      routerLink="/app/dashboard/settings"
+      routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
+      class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      (click)="closeMenu.emit()"
+    >
+      <svg lucideSettings [size]="20"></svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <!-- bottom section -->
+  <div class="shrink-0 border-t border-(--border) p-4">
+    <div class="mb-4 flex items-center gap-3 rounded-xl p-2">
+      <div
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-(--accent)/15 font-semibold text-(--accent)"
+      >
+        WW
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm font-semibold text-(--text-primary)">Your Account</p>
+        <p class="truncate text-xs text-(--text-secondary)">Personal Finance</p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--danger)"
+      (click)="logout.emit()"
+    >
+      <svg lucideLogOut [size]="20"></svg>
+      <span>Log out</span>
+    </button>
+  </div>
+</aside>
