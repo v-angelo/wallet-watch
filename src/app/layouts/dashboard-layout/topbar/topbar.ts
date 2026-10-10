@@ -1,25 +1,27 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import {
-  LucideMenu,
-  LucideSearch,
-  LucideBell,
+  LucideSun,
+  LucideMoon,
   LucideChevronDown,
   LucideUserRound,
   LucideSettings,
   LucideLogOut,
 } from '@lucide/angular';
+import { ThemeService } from '../../../core/services/theme';
+import { AuthService } from '../../../core/services/auth.service';
+import { UserAvatar } from '../../user-avatar/user-avatar';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
   imports: [
-    LucideMenu,
-    LucideSearch,
-    LucideBell,
+    LucideSun,
+    LucideMoon,
     LucideChevronDown,
     LucideUserRound,
     LucideSettings,
     LucideLogOut,
+    UserAvatar,
   ],
   templateUrl: './topbar.html',
 })
@@ -41,4 +43,10 @@ export class Topbar {
     this.closeProfileMenu();
     this.logout.emit();
   }
+
+  readonly themeService = inject(ThemeService);
+
+  private readonly authService = inject(AuthService);
+
+  readonly currentUser = this.authService.user;
 }

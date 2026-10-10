@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { Sidebar } from './sidebar/sidebar';
 import { Topbar } from './topbar/topbar';
+import { AuthService } from '../../core/services/auth.service';
+import { ThemeService } from '../../core/services/theme';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -20,8 +22,13 @@ export class DashboardLayout {
     this.mobileMenuOpen = false;
   }
 
-  // connect these handlers to AuthService logout flow.
+  private readonly router = inject(Router);
+
+  private readonly authService = inject(AuthService);
+
   logout(): void {
-    // call logout service and navigate to /login here.
+    this.closeMobileMenu();
+    this.authService.logoutAPI();
+    this.router.navigate(['/']);
   }
 }

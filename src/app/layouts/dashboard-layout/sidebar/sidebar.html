@@ -9,7 +9,7 @@
 }
 
 <aside
-  class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-(--border) bg-(--bg-secondary) transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:translate-x-0"
+  class="fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 -translate-x-full flex-col border-r border-(--border) bg-(--bg-secondary) transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:translate-x-0"
   [class.translate-x-0]="mobileOpen"
 >
   <!-- brand -->
@@ -18,10 +18,12 @@
       <span
         class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-(--bg-primary)"
       >
-        <svg lucideWallet [size]="22"></svg>
+        <svg lucideWallet [size]="27"></svg>
       </span>
 
-      <span class="text-xl font-bold tracking-tight text-(--text-primary)"> WalletWatch </span>
+      <span class="text-xl font-bold tracking-tight text-(--text-primary)">
+        Wallet<span class="text-(--accent)">Watch</span>
+      </span>
     </a>
 
     <button
@@ -41,7 +43,7 @@
     </p>
 
     <a
-      routerLink="/app/dashboard/overview"
+      routerLink="/dashboard/overview"
       routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
       [routerLinkActiveOptions]="{ exact: true }"
       class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
@@ -52,7 +54,7 @@
     </a>
 
     <a
-      routerLink="/app/dashboard/transactions"
+      routerLink="/dashboard/transactions"
       routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
       class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
       (click)="closeMenu.emit()"
@@ -62,7 +64,7 @@
     </a>
 
     <a
-      routerLink="/app/dashboard/budgets"
+      routerLink="/dashboard/budgets"
       routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
       class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
       (click)="closeMenu.emit()"
@@ -72,7 +74,7 @@
     </a>
 
     <a
-      routerLink="/app/dashboard/savings"
+      routerLink="/dashboard/savings"
       routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
       class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
       (click)="closeMenu.emit()"
@@ -82,7 +84,7 @@
     </a>
 
     <a
-      routerLink="/app/dashboard/reports"
+      routerLink="/dashboard/reports"
       routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
       class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
       (click)="closeMenu.emit()"
@@ -98,7 +100,7 @@
     </p>
 
     <a
-      routerLink="/app/dashboard/settings"
+      routerLink="/dashboard/settings"
       routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
       class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
       (click)="closeMenu.emit()"
@@ -111,15 +113,13 @@
   <!-- bottom section -->
   <div class="shrink-0 border-t border-(--border) p-4">
     <div class="mb-4 flex items-center gap-3 rounded-xl p-2">
-      <div
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-(--accent)/15 font-semibold text-(--accent)"
-      >
-        WW
-      </div>
+      <app-user-avatar />
 
       <div class="min-w-0 flex-1">
-        <p class="truncate text-sm font-semibold text-(--text-primary)">Your Account</p>
-        <p class="truncate text-xs text-(--text-secondary)">Personal Finance</p>
+        <p class="truncate text-sm font-semibold text-(--text-primary)">
+          {{ currentUser()?.username }}
+        </p>
+        <p class="truncate text-xs text-(--text-secondary)">{{ currentUser()?.email }}</p>
       </div>
     </div>
 

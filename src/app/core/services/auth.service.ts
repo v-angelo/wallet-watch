@@ -66,7 +66,7 @@ export class AuthService {
   }
 
   // logout
-  logout(): void {
+  logoutAPI(): void {
     this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
       next: () => {
         this.user.set(null);

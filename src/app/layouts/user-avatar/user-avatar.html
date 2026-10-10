@@ -1,0 +1,15 @@
+<div
+  class="flex h-9 w-9 items-center justify-center rounded-full bg-(--accent)/15 text-sm font-semibold text-(--accent)"
+>
+  @if (currentUser()?.profilePic) {
+    <img
+      [src]="currentUser()?.profilePic"
+      [alt]="currentUser()?.username || 'User'"
+      class="h-full w-full object-cover"
+    />
+  } @else {
+    <span>
+      {{ userInitials }}
+    </span>
+  }
+</div>

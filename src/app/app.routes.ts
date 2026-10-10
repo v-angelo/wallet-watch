@@ -22,11 +22,11 @@ export const routes: Routes = [
     component: Register,
   },
   {
-    path: 'app',
+    path: 'dashboard',
     component: DashboardLayout,
     children: [
       {
-        path: 'dashboard',
+        path: '',
         children: [
           {
             path: 'overview',

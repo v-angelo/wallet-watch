@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import {
   LucideWallet,
@@ -11,6 +11,8 @@ import {
   LucideLogOut,
   LucideX,
 } from '@lucide/angular';
+import { UserAvatar } from '../../user-avatar/user-avatar';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -27,6 +29,7 @@ import {
     LucideSettings,
     LucideLogOut,
     LucideX,
+    UserAvatar,
   ],
   templateUrl: './sidebar.html',
 })
@@ -34,4 +37,8 @@ export class Sidebar {
   @Output() closeMenu = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
   @Input() mobileOpen = false;
+
+  private readonly authService = inject(AuthService);
+
+  readonly currentUser = this.authService.user;
 }

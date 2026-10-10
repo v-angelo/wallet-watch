@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
-import { LucideMenu, LucideMoon, LucideSun, LucideX } from '@lucide/angular';
+import { LucideMenu, LucideMoon, LucideSun, LucideWallet, LucideX } from '@lucide/angular';
 import { ThemeService } from '../../core/services/theme';
 import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
+import { UserAvatar } from '../../layouts/user-avatar/user-avatar';
 
 @Component({
-  imports: [LucideMenu, LucideMoon, LucideSun, LucideX, RouterLink],
+  imports: [LucideWallet, LucideMenu, LucideMoon, LucideSun, LucideX, RouterLink, UserAvatar],
   selector: 'app-navbar',
   styleUrl: './navbar.css',
   templateUrl: './navbar.html',
@@ -38,7 +39,7 @@ export class Navbar {
 
   logout(): void {
     this.closeMobileMenu();
-    this.authService.logout();
+    this.authService.logoutAPI();
     this.router.navigate(['/']);
   }
 

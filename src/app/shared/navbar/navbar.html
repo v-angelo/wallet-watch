@@ -9,13 +9,15 @@
       class="flex items-center gap-2 text-xl font-bold tracking-tight"
       (click)="closeMobileMenu()"
     >
-      <div
-        class="flex h-9 w-9 items-center justify-center rounded-xl bg-(--accent) text-white shadow-sm"
+      <span
+        class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-(--bg-primary)"
       >
-        <span class="text-lg">W</span>
-      </div>
+        <svg lucideWallet [size]="27"></svg>
+      </span>
 
-      <span> Wallet<span class="text-(--accent)">Watch</span> </span>
+      <span class="text-xl font-bold tracking-tight text-(--text-primary)">
+        Wallet<span class="text-(--accent)">Watch</span>
+      </span>
     </a>
 
     <!-- desktop navigation -->
@@ -54,9 +56,13 @@
 
       <!-- auth -->
       @if (authService.user(); as user) {
-        <span class="text-sm font-semibold text-(--text-primary)">
-          {{ user.username }}
-        </span>
+        <div class="flex items-center justify-center gap-2">
+          <app-user-avatar />
+
+          <span class="text-sm font-semibold text-(--text-primary)">
+            {{ user.username }}
+          </span>
+        </div>
 
         <button
           type="button"
@@ -153,8 +159,12 @@
 
           <!-- mobile auth -->
           @if (authService.user(); as user) {
-            <div class="rounded-lg px-3 py-3 text-sm font-semibold text-(--text-primary)">
-              {{ user.username }}
+            <div class="flex items-center justify-start gap-2">
+              <app-user-avatar />
+
+              <span class="text-sm font-semibold text-(--text-primary)">
+                {{ user.username }}
+              </span>
             </div>
 
             <button
