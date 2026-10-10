@@ -6,7 +6,7 @@
     <a
       href="#"
       (click)="goHome(); $event.preventDefault()"
-      class="flex items-center gap-2 text-xl font-bold tracking-tight"
+      class="flex items-center gap-3 text-xl font-bold tracking-tight"
       (click)="closeMobileMenu()"
     >
       <span
@@ -36,6 +36,15 @@
         >
           About
         </a>
+
+        @if (authService.user(); as user) {
+          <a
+            routerLink="/dashboard"
+            class="text-sm font-medium text-(--text-secondary) transition-colors hover:text-(--text-primary)"
+          >
+            Dashboard
+          </a>
+        }
       }
 
       <!-- theme toggle -->
@@ -54,23 +63,76 @@
         }
       </button>
 
+      <div class="h-8 w-px bg-(--border)"></div>
+
       <!-- auth -->
-      @if (authService.user(); as user) {
-        <div class="flex items-center justify-center gap-2">
-          <app-user-avatar />
+      @if (!authService.authInitialized()) {
+        <!-- Loading placeholder -->
+        <div class="h-10 w-36 animate-pulse rounded-xl bg-(--border)"></div>
+      } @else if (authService.user(); as user) {
+        <!-- profile dropdown -->
+        <div class="relative">
+          <button
+            type="button"
+            aria-label="Open profile menu"
+            [attr.aria-expanded]="profileMenuOpen"
+            class="flex items-center gap-2 rounded-xl p-1.5 transition-colors hover:bg-(--border) sm:px-2"
+            (click)="toggleProfileMenu()"
+          >
+            <app-user-avatar />
 
-          <span class="text-sm font-semibold text-(--text-primary)">
-            {{ user.username }}
-          </span>
+            <span class="hidden text-left sm:block">
+              <span class="block text-sm font-semibold text-(--text-primary)">
+                {{ user.username }}
+              </span>
+              <span class="block text-xs text-(--text-secondary)">
+                {{ user.email }}
+              </span>
+            </span>
+
+            <svg
+              lucideChevronDown
+              [size]="16"
+              class="hidden text-(--text-secondary) transition-transform sm:block"
+              [class.rotate-180]="profileMenuOpen"
+            ></svg>
+          </button>
+
+          @if (profileMenuOpen) {
+            <div
+              class="absolute top-full right-0 mt-3 w-52 animate-fade-left rounded-xl border border-(--border) bg-(--bg-secondary) p-2 shadow-xl"
+            >
+              <a
+                routerLink="/app/dashboard/settings"
+                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+                (click)="closeProfileMenu()"
+              >
+                <svg lucideUserRound [size]="18"></svg>
+                My Profile
+              </a>
+
+              <a
+                routerLink="/app/dashboard/settings"
+                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+                (click)="closeProfileMenu()"
+              >
+                <svg lucideSettings [size]="18"></svg>
+                Settings
+              </a>
+
+              <div class="my-1 border-t border-(--border)"></div>
+
+              <button
+                type="button"
+                class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-(--danger) transition-colors hover:bg-(--danger)/10"
+                (click)="logout()"
+              >
+                <svg lucideLogOut [size]="18"></svg>
+                Log out
+              </button>
+            </div>
+          }
         </div>
-
-        <button
-          type="button"
-          (click)="logout()"
-          class="rounded-lg border border-(--border) px-4 py-2.5 text-sm font-semibold text-(--text-secondary) transition-all duration-200 hover:border-(--accent) hover:text-(--accent)"
-        >
-          Logout
-        </button>
       } @else {
         <a
           routerLink="/login"
@@ -151,6 +213,15 @@
             >
               About
             </a>
+
+            @if (authService.user(); as user) {
+              <a
+                routerLink="/dashboard"
+                class="rounded-lg px-3 py-3 text-sm font-medium text-(--text-secondary) transition-colors duration-200 hover:bg-(--bg-primary) hover:text-(--text-primary)"
+              >
+                Dashboard
+              </a>
+            }
           }
 
           @if (isLandingPage()) {
@@ -158,8 +229,10 @@
           }
 
           <!-- mobile auth -->
-          @if (authService.user(); as user) {
-            <div class="flex items-center justify-start gap-2">
+          @if (!authService.authInitialized()) {
+            <div class="mx-3 my-2 h-10 animate-pulse rounded-lg bg-(--border)"></div>
+          } @else if (authService.user(); as user) {
+            <div class="flex items-center justify-start gap-2 rounded-lg px-3 py-2">
               <app-user-avatar />
 
               <span class="text-sm font-semibold text-(--text-primary)">

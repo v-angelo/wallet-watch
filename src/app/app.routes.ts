@@ -7,6 +7,8 @@ import { Register } from './pages/auth/register/register';
 import { DashboardLayout } from './layouts/dashboard-layout/dashboard-layout';
 import { Overview } from './pages/dashboard/overview/overview';
 import { Transactions } from './pages/dashboard/transactions/transactions';
+import { authGuard } from './core/guards/auth-guard';
+import { guestGuard } from './core/guards/guest-guard';
 
 export const routes: Routes = [
   {
@@ -16,14 +18,17 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login,
+    canActivate: [guestGuard],
   },
   {
     path: 'register',
     component: Register,
+    canActivate: [guestGuard],
   },
   {
     path: 'dashboard',
     component: DashboardLayout,
+    canActivate: [authGuard],
     children: [
       {
         path: '',

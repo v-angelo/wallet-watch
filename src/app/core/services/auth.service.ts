@@ -34,8 +34,17 @@ export class AuthService {
     });
   }
 
+  // logout
+  logoutAPI() {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.apiUrl}/logout`,
+      {},
+      { withCredentials: true },
+    );
+  }
+
   // set current user
-  setUser(user: User): void {
+  setUser(user: User | null): void {
     this.user.set(user);
   }
 
@@ -44,36 +53,44 @@ export class AuthService {
     return this.user();
   }
 
-  // initialize auth
-  initializeAuth(): void {
-    this.http
-      .get<{ success: boolean; data: User }>(`${this.apiUrl}/me`, { withCredentials: true })
-      .subscribe({
-        next: (response) => {
-          this.user.set(response.data);
-        },
-        error: (error) => {
-          if (error.status === 401) {
+  // tracks whether the initial authentication check has completed
+  authInitialized = signal(false);
+
+  // reuse the same request if multiple guards run at once
+  private authInitialization: Promise<void> | null = null;
+
+  // initialize auth and wait for the server response
+  initializeAuth(): Promise<void> {
+    if (this.authInitialized()) {
+      return Promise.resolve();
+    }
+
+    if (this.authInitialization) {
+      return this.authInitialization;
+    }
+
+    this.authInitialization = new Promise<void>((resolve) => {
+      this.http
+        .get<{ success: boolean; data: User }>(`${this.apiUrl}/me`, { withCredentials: true })
+        .subscribe({
+          next: (response) => {
+            this.user.set(response.data);
+            this.authInitialized.set(true);
+            resolve();
+          },
+          error: (error) => {
             this.user.set(null);
-            return;
-          }
 
-          console.error('Failed to initialize authentication:', error);
+            if (error.status !== 401) {
+              console.error('Failed to initialize authentication:', error);
+            }
 
-          this.user.set(null);
-        },
-      });
-  }
-
-  // logout
-  logoutAPI(): void {
-    this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
-      next: () => {
-        this.user.set(null);
-      },
-      error: () => {
-        this.user.set(null);
-      },
+            this.authInitialized.set(true);
+            resolve();
+          },
+        });
     });
+
+    return this.authInitialization;
   }
 }

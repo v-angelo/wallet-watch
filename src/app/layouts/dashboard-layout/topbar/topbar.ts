@@ -7,9 +7,9 @@ import {
   LucideSettings,
   LucideLogOut,
 } from '@lucide/angular';
-import { ThemeService } from '../../../core/services/theme';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserAvatar } from '../../user-avatar/user-avatar';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-topbar',
