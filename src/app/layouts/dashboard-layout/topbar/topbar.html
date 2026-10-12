@@ -1,6 +1,15 @@
 <header
-  class="sticky top-0 z-30 flex h-16 items-center justify-end gap-4 border-b border-(--border) bg-(--bg-secondary)/95 px-4 backdrop-blur-md sm:px-6 lg:px-8"
+  class="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-(--border) bg-(--bg-secondary)/95 px-4 backdrop-blur-md sm:px-6 lg:px-8"
 >
+  <!-- left: current page -->
+  <div class="min-w-0">
+    <h1 class="truncate text-base font-semibold tracking-tight text-(--text-primary) sm:text-lg">
+      {{ pageTitle() }}
+    </h1>
+
+    <p class="hidden text-xs text-(--text-secondary) sm:block">WalletWatch Dashboard</p>
+  </div>
+
   <!-- right: actions and profile -->
   <div class="flex shrink-0 items-center gap-2 sm:gap-4">
     <!-- theme toggle -->

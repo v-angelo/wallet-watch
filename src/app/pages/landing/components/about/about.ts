@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { LucideSparkles, LucideShield, LucideGlobe, LucideRocket } from '@lucide/angular';
-import { ScrollAnimateDirective } from '../../../../shared/directives/scroll-animate.directive';
+import { ScrollAnimateDirective } from '../../../../core/directives/scroll-animate.directive';
 
 type HighlightIcon = 'sparkles' | 'shield' | 'globe' | 'rocket';
 
