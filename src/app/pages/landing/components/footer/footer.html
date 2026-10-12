@@ -3,14 +3,17 @@
     <div class="flex flex-col items-center justify-between gap-8 md:flex-row">
       <!-- brand -->
       <div>
-        <a href="#" class="flex items-center gap-3">
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-lg font-bold text-white"
+        <!-- logo -->
+        <a href="#" class="flex items-center gap-3 text-xl font-bold tracking-tight">
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-(--bg-primary)"
           >
-            W
-          </div>
+            <svg lucideWallet [size]="27"></svg>
+          </span>
 
-          <span class="text-xl font-bold"> Wallet<span class="text-(--accent)">Watch</span> </span>
+          <span class="text-xl font-bold tracking-tight text-(--text-primary)">
+            Wallet<span class="text-(--accent)">Watch</span>
+          </span>
         </a>
 
         <p class="mt-3 max-w-sm text-sm text-(--text-secondary)">

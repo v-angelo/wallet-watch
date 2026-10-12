@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
 import {
   LucideSun,
   LucideMoon,
@@ -6,6 +6,7 @@ import {
   LucideUserRound,
   LucideSettings,
   LucideLogOut,
+  LucideMenu,
 } from '@lucide/angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserAvatar } from '../../user-avatar/user-avatar';
@@ -24,6 +25,7 @@ import { filter, startWith } from 'rxjs';
     LucideUserRound,
     LucideSettings,
     LucideLogOut,
+    LucideMenu,
     UserAvatar,
   ],
   templateUrl: './topbar.html',
@@ -31,6 +33,7 @@ import { filter, startWith } from 'rxjs';
 export class Topbar {
   @Output() menuToggle = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
+  @Input() mobileMenuOpen = false;
 
   profileMenuOpen = false;
 

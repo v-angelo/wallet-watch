@@ -1,13 +1,25 @@
 <header
   class="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-(--border) bg-(--bg-secondary)/95 px-4 backdrop-blur-md sm:px-6 lg:px-8"
 >
-  <!-- left: current page -->
-  <div class="min-w-0">
-    <h1 class="truncate text-base font-semibold tracking-tight text-(--text-primary) sm:text-lg">
-      {{ pageTitle() }}
-    </h1>
+  <!-- left: mobile menu + current page -->
+  <div class="flex min-w-0 items-center gap-3">
+    <button
+      type="button"
+      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary) md:hidden"
+      aria-label="Open navigation menu"
+      [attr.aria-expanded]="mobileMenuOpen"
+      (click)="menuToggle.emit()"
+    >
+      <svg lucideMenu [size]="21"></svg>
+    </button>
 
-    <p class="hidden text-xs text-(--text-secondary) sm:block">WalletWatch Dashboard</p>
+    <div class="min-w-0">
+      <h1 class="truncate text-base font-semibold tracking-tight text-(--text-primary) sm:text-lg">
+        {{ pageTitle() }}
+      </h1>
+
+      <p class="hidden text-xs text-(--text-secondary) sm:block">WalletWatch Dashboard</p>
+    </div>
   </div>
 
   <!-- right: actions and profile -->

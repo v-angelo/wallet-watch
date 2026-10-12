@@ -1,4 +1,5 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import {
   LucideWallet,
@@ -75,12 +76,12 @@ export class Overview {
     year: 'numeric',
   }).format(this.currentDate);
 
-  // Mock financial data
+  // mock financial data
   readonly monthlyIncome = 35000;
   readonly monthlyExpenses = 12400;
   readonly netSavings = this.monthlyIncome - this.monthlyExpenses;
 
-  // Summary cards
+  // summary cards
   readonly summaryCards = signal<SummaryCard[]>([
     {
       title: 'Total Balance',
@@ -112,7 +113,7 @@ export class Overview {
     },
   ]);
 
-  // Last six months of cash flow
+  // last six months of cash flow
   readonly cashFlow = signal<MonthlyCashFlow[]>([
     { month: 'May', income: 28000, expenses: 18000 },
     { month: 'Jun', income: 32000, expenses: 21000 },
@@ -126,7 +127,7 @@ export class Overview {
     Math.max(1, ...this.cashFlow().flatMap((item) => [item.income, item.expenses])),
   );
 
-  // Mock spending breakdown
+  // mock spending breakdown
   readonly spendingCategories = signal<SpendingCategory[]>([
     {
       name: 'Food & Dining',
@@ -154,7 +155,7 @@ export class Overview {
     },
   ]);
 
-  // Mock recent transactions
+  // mock recent transactions
   readonly recentTransactions = signal<RecentTransaction[]>([
     {
       id: 1,
@@ -235,5 +236,13 @@ export class Overview {
 
   trackTransaction(_index: number, transaction: RecentTransaction): number {
     return transaction.id;
+  }
+
+  private readonly router = inject(Router);
+
+  openNewTransaction(): void {
+    this.router.navigate(['/dashboard/transactions'], {
+      queryParams: { action: 'new' },
+    });
   }
 }

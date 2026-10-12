@@ -125,6 +125,18 @@
     }
   }
 
+  @keyframes grow-bar {
+    from {
+      transform: scaleY(0);
+      opacity: 0.5;
+    }
+
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
   /* animation delays */
   .animate-delay-150 {
     animation-delay: 75ms;
@@ -150,6 +162,11 @@
   .scroll-animate.scroll-visible {
     animation-play-state: running;
   }
+}
+
+@utility animate-grow-bar {
+  animation: grow-bar 0.65s ease-out both;
+  transform-origin: bottom;
 }
 
 @media (prefers-reduced-motion: reduce) {
