@@ -20,7 +20,12 @@ import {
   LucideBriefcaseBusiness,
   LucideHeartPulse,
   LucideCircleDollarSign,
+  LucidePencil,
+  LucideTrash2,
 } from '@lucide/angular';
+
+import { TransactionData, TransactionService } from '../../../core/services/tansaction.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 type TransactionType = 'income' | 'expense';
 
@@ -28,7 +33,7 @@ type TransactionIcon =
   'food' | 'transport' | 'shopping' | 'housing' | 'salary' | 'health' | 'other';
 
 interface Transaction {
-  id: number;
+  id: string;
   title: string;
   category: string;
   date: string;
@@ -50,6 +55,7 @@ interface Transaction {
     LucideSlidersHorizontal,
     LucideCalendarDays,
     LucidePlus,
+    LucideX,
     LucideChevronLeft,
     LucideChevronRight,
     LucideX,
@@ -60,6 +66,8 @@ interface Transaction {
     LucideBriefcaseBusiness,
     LucideHeartPulse,
     LucideCircleDollarSign,
+    LucidePencil,
+    LucideTrash2,
   ],
   templateUrl: './transactions.html',
 })
@@ -67,6 +75,8 @@ export class Transactions implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
+    this.loadTransactions();
+
     this.route.queryParamMap.subscribe((params) => {
       if (params.get('action') === 'new') {
         this.showAddForm.set(true);
@@ -102,99 +112,6 @@ export class Transactions implements OnInit {
     date: this.currentDate.toISOString().slice(0, 10),
   });
 
-  readonly transactions = signal<Transaction[]>([
-    {
-      id: 1,
-      title: 'Monthly groceries',
-      category: 'Food & Dining',
-      date: '2026-10-12',
-      amount: 850,
-      type: 'expense',
-      icon: 'food',
-    },
-    {
-      id: 2,
-      title: 'Fuel',
-      category: 'Transport',
-      date: '2026-10-11',
-      amount: 1500,
-      type: 'expense',
-      icon: 'transport',
-    },
-    {
-      id: 3,
-      title: 'Monthly salary',
-      category: 'Income',
-      date: '2026-10-01',
-      amount: 35000,
-      type: 'income',
-      icon: 'salary',
-    },
-    {
-      id: 4,
-      title: 'Online shopping',
-      category: 'Shopping',
-      date: '2026-09-29',
-      amount: 1800,
-      type: 'expense',
-      icon: 'shopping',
-    },
-    {
-      id: 5,
-      title: 'Electricity bill',
-      category: 'Bills & Utilities',
-      date: '2026-09-27',
-      amount: 1200,
-      type: 'expense',
-      icon: 'housing',
-    },
-    {
-      id: 6,
-      title: 'Freelance payment',
-      category: 'Income',
-      date: '2026-09-25',
-      amount: 8000,
-      type: 'income',
-      icon: 'salary',
-    },
-    {
-      id: 7,
-      title: 'Restaurant dinner',
-      category: 'Food & Dining',
-      date: '2026-09-22',
-      amount: 650,
-      type: 'expense',
-      icon: 'food',
-    },
-    {
-      id: 8,
-      title: 'Doctor appointment',
-      category: 'Healthcare',
-      date: '2026-09-18',
-      amount: 900,
-      type: 'expense',
-      icon: 'health',
-    },
-    {
-      id: 9,
-      title: 'Rent',
-      category: 'Bills & Utilities',
-      date: '2026-09-05',
-      amount: 7000,
-      type: 'expense',
-      icon: 'housing',
-    },
-    {
-      id: 10,
-      title: 'Bus pass',
-      category: 'Transport',
-      date: '2026-08-28',
-      amount: 600,
-      type: 'expense',
-      icon: 'transport',
-    },
-  ]);
-
   readonly categories = [
     'Food & Dining',
     'Transport',
@@ -204,6 +121,59 @@ export class Transactions implements OnInit {
     'Income',
     'Other',
   ];
+
+  private readonly transactionService = inject(TransactionService);
+
+  readonly isLoading = signal(false);
+  readonly isSaving = signal(false);
+  readonly errorMessage = signal('');
+
+  readonly transactions = signal<Transaction[]>([]);
+
+  private mapTransaction(transaction: TransactionData): Transaction {
+    const iconMap: Record<string, TransactionIcon> = {
+      'Food & Dining': 'food',
+      Transport: 'transport',
+      Shopping: 'shopping',
+      'Bills & Utilities': 'housing',
+      Healthcare: 'health',
+      Income: 'salary',
+      Salary: 'salary',
+      Other: 'other',
+    };
+
+    return {
+      id: transaction._id,
+      title: transaction.title,
+      category: transaction.category,
+      date: transaction.date.slice(0, 10),
+      amount: transaction.amount,
+      type: transaction.type,
+      icon: iconMap[transaction.category] ?? (transaction.type === 'income' ? 'salary' : 'other'),
+    };
+  }
+
+  loadTransactions(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.transactionService.getTransactions().subscribe({
+      next: (response) => {
+        this.transactions.set(response.data.map((transaction) => this.mapTransaction(transaction)));
+
+        this.isLoading.set(false);
+      },
+
+      error: (error: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(
+          error.status === 401
+            ? 'Your session has expired. Please log in again.'
+            : 'Failed to load transactions. Please try again.',
+        );
+      },
+    });
+  }
 
   readonly filteredTransactions = computed(() => {
     const search = this.searchTerm().trim().toLowerCase();
@@ -312,7 +282,20 @@ export class Transactions implements OnInit {
   }
 
   toggleAddForm(): void {
-    this.showAddForm.update((visible) => !visible);
+    if (!this.showAddForm()) {
+      this.editingTransactionId.set(null);
+      this.errorMessage.set('');
+
+      this.newTransaction.set({
+        title: '',
+        category: 'Food & Dining',
+        amount: '',
+        type: 'expense',
+        date: new Date().toISOString().slice(0, 10),
+      });
+    }
+
+    this.showAddForm.update((value) => !value);
   }
 
   updateNewTransaction(
@@ -328,48 +311,166 @@ export class Transactions implements OnInit {
   addTransaction(): void {
     const form = this.newTransaction();
     const amount = Number(form.amount);
+    const editingId = this.editingTransactionId();
 
-    if (!form.title.trim() || !Number.isFinite(amount) || amount <= 0 || !form.date) {
+    if (
+      !form.title.trim() ||
+      form.title.trim().length < 2 ||
+      form.title.trim().length > 100 ||
+      !Number.isFinite(amount) ||
+      amount <= 0 ||
+      !form.date ||
+      (form.type === 'expense' && !form.category)
+    ) {
+      this.errorMessage.set('Please enter valid transaction details.');
       return;
     }
 
-    const iconMap: Record<string, TransactionIcon> = {
-      'Food & Dining': 'food',
-      Transport: 'transport',
-      Shopping: 'shopping',
-      'Bills & Utilities': 'housing',
-      Healthcare: 'health',
-      Income: 'salary',
-      Other: 'other',
-    };
+    this.isSaving.set(true);
+    this.errorMessage.set('');
 
-    const transaction: Transaction = {
-      id: Math.max(0, ...this.transactions().map((item) => item.id)) + 1,
+    const payload = {
       title: form.title.trim(),
-      category: form.type === 'income' ? 'Income' : form.category,
-      date: form.date,
       amount,
       type: form.type,
-      icon: form.type === 'income' ? 'salary' : (iconMap[form.category] ?? 'other'),
+      category: form.type === 'income' ? 'Income' : form.category,
+      date: form.date,
     };
 
-    this.transactions.update((items) => [transaction, ...items]);
-    this.selectedMonth.set('all');
-    this.selectedType.set('all');
-    this.selectedCategory.set('all');
-    this.searchTerm.set('');
-    this.currentPage.set(1);
+    const request = editingId
+      ? this.transactionService.updateTransaction(editingId, payload)
+      : this.transactionService.createTransaction(payload);
+
+    request.subscribe({
+      next: (response) => {
+        const updated = this.mapTransaction(response.data);
+
+        if (editingId) {
+          this.transactions.update((items) =>
+            items.map((item) => (item.id === editingId ? updated : item)),
+          );
+        } else {
+          this.transactions.update((items) => [updated, ...items]);
+        }
+
+        // Show the changed transaction even if it belongs to another month.
+        this.selectedMonth.set('all');
+        this.selectedType.set('all');
+        this.selectedCategory.set('all');
+        this.searchTerm.set('');
+        this.currentPage.set(1);
+
+        this.newTransaction.set({
+          title: '',
+          category: 'Food & Dining',
+          amount: '',
+          type: 'expense',
+          date: new Date().toISOString().slice(0, 10),
+        });
+
+        this.editingTransactionId.set(null);
+        this.showAddForm.set(false);
+        this.isSaving.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isSaving.set(false);
+        this.errorMessage.set(
+          error.error?.message ??
+            `Failed to ${editingId ? 'update' : 'create'} transaction. Please try again.`,
+        );
+      },
+    });
+  }
+
+  readonly editingTransactionId = signal<string | null>(null);
+
+  editTransaction(transaction: Transaction): void {
+    this.editingTransactionId.set(transaction.id);
+
+    this.newTransaction.set({
+      title: transaction.title,
+      category: transaction.category,
+      amount: String(transaction.amount),
+      type: transaction.type,
+      date: transaction.date,
+    });
+
+    this.errorMessage.set('');
+    this.showAddForm.set(true);
+  }
+
+  deleteTransaction(transaction: Transaction): void {
+    const confirmed = window.confirm(`Are you sure you want to delete "${transaction.title}"?`);
+
+    if (!confirmed) return;
+
+    this.errorMessage.set('');
+
+    this.transactionService.deleteTransaction(transaction.id).subscribe({
+      next: () => {
+        this.transactions.update((items) => items.filter((item) => item.id !== transaction.id));
+
+        // Return to the previous page if the current page becomes empty.
+        this.currentPage.update((page) => Math.min(page, this.totalPages()));
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage.set(
+          error.error?.message ?? 'Failed to delete transaction. Please try again.',
+        );
+      },
+    });
+  }
+
+  cancelTransactionForm(): void {
+    this.showAddForm.set(false);
+    this.editingTransactionId.set(null);
+    this.errorMessage.set('');
+
     this.newTransaction.set({
       title: '',
       category: 'Food & Dining',
       amount: '',
       type: 'expense',
-      date: this.currentDate.toISOString().slice(0, 10),
+      date: new Date().toISOString().slice(0, 10),
     });
-    this.showAddForm.set(false);
   }
 
-  trackTransaction(_index: number, transaction: Transaction): number {
+  availableMonths = computed(() => {
+    const months = new Set<string>();
+
+    // always include the current month
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+    months.add(currentMonth);
+
+    // add months found in the transactions list
+    this.transactions().forEach((transaction) => {
+      const date = String(transaction.date);
+      const match = date.match(/^(\d{4})-(\d{2})/);
+
+      if (match) {
+        months.add(`${match[1]}-${match[2]}`);
+      }
+    });
+
+    // sort newest to oldest and create readable labels
+    return Array.from(months)
+      .sort((a, b) => b.localeCompare(a))
+      .map((value) => {
+        const [year, month] = value.split('-').map(Number);
+
+        return {
+          value,
+          label: new Date(year, month - 1, 1).toLocaleDateString('en-IN', {
+            month: 'long',
+            year: 'numeric',
+          }),
+        };
+      });
+  });
+
+  trackTransaction(_index: number, transaction: Transaction): string {
     return transaction.id;
   }
 }
