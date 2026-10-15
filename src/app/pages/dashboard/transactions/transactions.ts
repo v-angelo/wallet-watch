@@ -8,7 +8,6 @@ import {
   LucideArrowDownRight,
   LucideSearch,
   LucideSlidersHorizontal,
-  LucideCalendarDays,
   LucidePlus,
   LucideChevronLeft,
   LucideChevronRight,
@@ -26,6 +25,8 @@ import {
 
 import { TransactionData, TransactionService } from '../../../core/services/tansaction.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CurrencyService } from '../../../core/services/currency.service';
+import { TransactionFormModal } from './transaction-form-modal/transaction-form-modal';
 
 type TransactionType = 'income' | 'expense';
 
@@ -46,6 +47,7 @@ interface Transaction {
   selector: 'app-transaction',
   standalone: true,
   imports: [
+    TransactionFormModal,
     LucideWallet,
     LucideTrendingUp,
     LucideTrendingDown,
@@ -53,7 +55,6 @@ interface Transaction {
     LucideArrowDownRight,
     LucideSearch,
     LucideSlidersHorizontal,
-    LucideCalendarDays,
     LucidePlus,
     LucideX,
     LucideChevronLeft,
@@ -73,6 +74,8 @@ interface Transaction {
 })
 export class Transactions implements OnInit {
   private readonly route = inject(ActivatedRoute);
+
+  protected currencyService = inject(CurrencyService);
 
   ngOnInit(): void {
     this.loadTransactions();
@@ -99,9 +102,9 @@ export class Transactions implements OnInit {
   readonly searchTerm = signal('');
   readonly selectedType = signal('all');
   readonly selectedCategory = signal('all');
-  readonly selectedMonth = signal(this.currentMonth);
+  readonly selectedMonth = signal('all');
   readonly currentPage = signal(1);
-  readonly pageSize = 6;
+  readonly pageSize = 5;
   readonly showAddForm = signal(false);
 
   readonly newTransaction = signal({
@@ -230,6 +233,15 @@ export class Transactions implements OnInit {
   readonly endItem = computed(() =>
     Math.min(this.currentPage() * this.pageSize, this.filteredTransactions().length),
   );
+
+  filtersOn(): boolean {
+    return (
+      !!this.searchTerm()?.trim() ||
+      this.selectedType() !== 'all' ||
+      this.selectedCategory() !== 'all' ||
+      this.selectedMonth() !== 'all'
+    );
+  }
 
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('en-IN', {

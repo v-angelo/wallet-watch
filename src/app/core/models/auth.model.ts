@@ -14,7 +14,8 @@ export interface User {
   username: string;
   email: string;
   profilePic: string;
-  provider: string;
+  provider: 'local' | 'google';
+  currency: string;
   createdAt: string;
   updatedAt: string;
 }

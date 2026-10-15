@@ -16,13 +16,6 @@
     </div>
 
     <div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-      <div
-        class="flex min-w-0 items-center justify-center gap-2 rounded-xl border border-(--border) bg-(--bg-secondary) px-2 py-3 text-xs text-(--text-primary) sm:px-4 sm:text-sm"
-      >
-        <svg lucideCalendarDays [size]="17" class="shrink-0 text-(--accent)"></svg>
-        <span class="truncate">{{ monthLabel }}</span>
-      </div>
-
       <button
         type="button"
         (click)="toggleAddForm()"
@@ -72,9 +65,12 @@
         </div>
       </div>
       <p class="mt-5 text-2xl font-bold tracking-tight text-(--success) sm:text-3xl">
-        {{ formatCurrency(totalIncome()) }}
+        {{ currencyService.format(totalIncome()) }}
       </p>
-      <p class="mt-2 text-xs text-(--text-secondary)">For the selected filters</p>
+
+      @if (filtersOn()) {
+        <p class="mt-2 text-xs text-(--text-secondary)">For the selected filters</p>
+      }
     </article>
 
     <!-- expenses -->
@@ -91,9 +87,12 @@
         </div>
       </div>
       <p class="mt-5 text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
-        {{ formatCurrency(totalExpenses()) }}
+        {{ currencyService.format(totalExpenses()) }}
       </p>
-      <p class="mt-2 text-xs text-(--text-secondary)">For the selected filters</p>
+
+      @if (filtersOn()) {
+        <p class="mt-2 text-xs text-(--text-secondary)">For the selected filters</p>
+      }
     </article>
 
     <!-- cash flow -->
@@ -114,144 +113,27 @@
         [class.text-(--success)]="netTotal() >= 0"
         [class.text-(--danger)]="netTotal() < 0"
       >
-        {{ formatCurrency(netTotal()) }}
+        {{ currencyService.format(netTotal()) }}
       </p>
-      <p class="mt-2 text-xs text-(--text-secondary)">Income minus expenses</p>
+
+      @if (filtersOn()) {
+        <p class="mt-2 text-xs text-(--text-secondary)">Income minus expenses</p>
+      }
     </article>
   </section>
 
-  <!-- add transaction form -->
+  <!-- transaction form modal -->
   @if (showAddForm()) {
-    <section
-      class="animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 sm:p-6"
-    >
-      <div class="mb-5">
-        <h2 class="text-lg font-semibold text-(--text-primary)">
-          {{ editingTransactionId() ? 'Edit Transaction' : 'Add Transaction' }}
-        </h2>
-        <p class="mt-1 text-sm text-(--text-secondary)">
-          Add an income or expense to your transaction list.
-        </p>
-      </div>
-
-      <form
-        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        (submit)="$event.preventDefault(); addTransaction()"
-      >
-        <div class="space-y-2 sm:col-span-2">
-          <label for="transaction-title" class="text-sm font-medium text-(--text-primary)">
-            Description
-          </label>
-          <input
-            id="transaction-title"
-            name="title"
-            required
-            maxlength="100"
-            [value]="newTransaction().title"
-            (input)="updateNewTransaction('title', $any($event.target).value)"
-            placeholder="e.g. Grocery shopping"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-3.5 py-3 text-sm text-(--text-primary) transition outline-none focus:border-(--accent) focus:ring-2 focus:ring-(--accent)/15"
-          />
-        </div>
-
-        <div class="space-y-2">
-          <label for="transaction-type" class="text-sm font-medium text-(--text-primary)">
-            Type
-          </label>
-          <select
-            id="transaction-type"
-            name="type"
-            [value]="newTransaction().type"
-            (change)="updateNewTransaction('type', $any($event.target).value)"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-3.5 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
-          >
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-          </select>
-        </div>
-
-        <div class="space-y-2">
-          <label for="transaction-category" class="text-sm font-medium text-(--text-primary)">
-            Category
-          </label>
-          <select
-            id="transaction-category"
-            name="category"
-            [value]="newTransaction().category"
-            (change)="updateNewTransaction('category', $any($event.target).value)"
-            [disabled]="newTransaction().type === 'income'"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-3.5 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent) disabled:opacity-50"
-          >
-            @for (category of categories; track category) {
-              @if (category !== 'Income') {
-                <option [value]="category">{{ category }}</option>
-              }
-            }
-          </select>
-        </div>
-
-        <div class="space-y-2">
-          <label for="transaction-amount" class="text-sm font-medium text-(--text-primary)">
-            Amount (₹)
-          </label>
-          <input
-            id="transaction-amount"
-            name="amount"
-            type="number"
-            min="0.01"
-            step="0.01"
-            required
-            [value]="newTransaction().amount"
-            (input)="updateNewTransaction('amount', $any($event.target).value)"
-            placeholder="0.00"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-3.5 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
-          />
-        </div>
-
-        <div class="space-y-2">
-          <label for="transaction-date" class="text-sm font-medium text-(--text-primary)">
-            Date
-          </label>
-          <input
-            id="transaction-date"
-            name="date"
-            type="date"
-            required
-            [value]="newTransaction().date"
-            (input)="updateNewTransaction('date', $any($event.target).value)"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-3.5 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
-          />
-        </div>
-
-        <div class="flex flex-col gap-3 sm:col-span-2 sm:flex-row sm:items-end lg:col-span-3">
-          <button
-            type="submit"
-            [disabled]="isSaving()"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) px-5 py-3 text-sm font-semibold text-(--bg-primary) transition-colors hover:bg-(--accent-hover) disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-          >
-            <svg lucidePlus [size]="17"></svg>
-            {{
-              isSaving()
-                ? editingTransactionId()
-                  ? 'Saving Changes...'
-                  : 'Saving...'
-                : editingTransactionId()
-                  ? 'Update'
-                  : 'Add'
-            }}
-          </button>
-
-          <button
-            type="button"
-            (click)="cancelTransactionForm()"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-(--border) bg-(--bg-primary) px-5 py-3 text-sm font-semibold text-(--text-primary) transition-colors hover:border-(--accent) sm:w-auto"
-          >
-            <svg lucideX [size]="17"></svg>
-            Cancel
-          </button>
-        </div>
-      </form>
-    </section>
+    <app-transaction-form-modal
+      [newTransaction]="newTransaction()"
+      [categories]="categories"
+      [editingTransactionId]="editingTransactionId()"
+      [isSaving]="isSaving()"
+      [currencySymbol]="currencyService.getSymbol()"
+      (fieldChange)="updateNewTransaction($event.field, $event.value)"
+      (save)="addTransaction()"
+      (cancel)="cancelTransactionForm()"
+    />
   }
 
   <!-- transaction list -->
@@ -304,12 +186,7 @@
           Filters
         </div>
 
-        @if (
-          searchTerm() ||
-          selectedType() !== 'all' ||
-          selectedCategory() !== 'all' ||
-          selectedMonth() !== 'all'
-        ) {
+        @if (filtersOn()) {
           <button
             type="button"
             (click)="resetFilters()"
@@ -372,7 +249,7 @@
             (change)="onMonthChange($any($event.target).value)"
             class="block w-full min-w-0 rounded-xl border border-(--border) bg-(--bg-primary) px-2.5 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent) sm:px-3"
           >
-            <option value="">All months</option>
+            <option value="all">All months</option>
 
             @for (month of availableMonths(); track month.value) {
               <option [value]="month.value">
@@ -383,12 +260,7 @@
         </div>
       </div>
 
-      @if (
-        searchTerm() ||
-        selectedType() !== 'all' ||
-        selectedCategory() !== 'all' ||
-        selectedMonth() !== 'all'
-      ) {
+      @if (filtersOn()) {
         <p class="text-xs text-(--text-secondary)">
           Showing results for your selected search and filters.
         </p>
@@ -498,7 +370,7 @@
                 [class.text-(--text-primary)]="transaction.type === 'expense'"
               >
                 {{ transaction.type === 'income' ? '+' : '−'
-                }}{{ formatCurrency(transaction.amount) }}
+                }}{{ currencyService.format(transaction.amount) }}
               </td>
 
               <td class="px-4 py-3">
@@ -598,7 +470,7 @@
                 [class.text-(--text-primary)]="transaction.type === 'expense'"
               >
                 {{ transaction.type === 'income' ? '+' : '−'
-                }}{{ formatCurrency(transaction.amount) }}
+                }}{{ currencyService.format(transaction.amount) }}
               </p>
 
               <span
