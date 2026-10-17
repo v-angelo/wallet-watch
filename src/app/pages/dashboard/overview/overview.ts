@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import {
   LucideWallet,
@@ -15,6 +15,8 @@ import {
   LucideHouse,
   LucideArrowRight,
 } from '@lucide/angular';
+import { TransactionData, TransactionService } from '../../../core/services/tansaction.service';
+import { CurrencyService } from '../../../core/services/currency.service';
 
 interface SummaryCard {
   title: string;
@@ -34,18 +36,19 @@ interface MonthlyCashFlow {
 interface SpendingCategory {
   name: string;
   amount: number;
-  budget: number;
   color: string;
 }
 
+type CategoryIcon = 'food' | 'transport' | 'shopping' | 'housing';
+
 interface RecentTransaction {
-  id: number;
+  id: string;
   title: string;
   category: string;
   date: string;
   amount: number;
   type: 'income' | 'expense';
-  icon: 'food' | 'transport' | 'shopping' | 'housing';
+  icon: CategoryIcon;
 }
 
 @Component({
@@ -64,10 +67,15 @@ interface RecentTransaction {
     LucideShoppingBag,
     LucideHouse,
     LucideArrowRight,
+    RouterLink,
   ],
   templateUrl: './overview.html',
 })
 export class Overview {
+  private readonly router = inject(Router);
+  private readonly transactionService = inject(TransactionService);
+  private readonly currencyService = inject(CurrencyService);
+
   readonly currentDate = new Date();
   readonly Math = Math;
 
@@ -76,169 +84,248 @@ export class Overview {
     year: 'numeric',
   }).format(this.currentDate);
 
-  // mock financial data
-  readonly monthlyIncome = 35000;
-  readonly monthlyExpenses = 12400;
-  readonly netSavings = this.monthlyIncome - this.monthlyExpenses;
+  readonly currentMonthShort = new Intl.DateTimeFormat('en-IN', {
+    month: 'short',
+  }).format(this.currentDate);
 
-  // summary cards
-  readonly summaryCards = signal<SummaryCard[]>([
+  readonly transactions = signal<TransactionData[]>([]);
+  readonly isLoading = signal(true);
+  readonly errorMessage = signal('');
+
+  // date helpers
+  private readonly currentMonthKey = this.getMonthKey(this.currentDate);
+
+  private getMonthKey(date: Date): string {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  private parseTransactionDate(value: string): Date {
+    // parse date-only strings as local dates to avoid timezone shifts.
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+
+    if (match) {
+      return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+    }
+
+    return new Date(value);
+  }
+
+  private isInCurrentMonth(transaction: TransactionData): boolean {
+    const date = this.parseTransactionDate(transaction.date);
+
+    return !Number.isNaN(date.getTime()) && this.getMonthKey(date) === this.currentMonthKey;
+  }
+
+  private getAmount(transactions: TransactionData[], type: 'income' | 'expense'): number {
+    return transactions
+      .filter((transaction) => transaction.type === type)
+      .reduce((total, transaction) => total + Number(transaction.amount || 0), 0);
+  }
+
+  // transactions for the current month
+  readonly currentMonthTransactions = computed(() =>
+    this.transactions().filter((transaction) => this.isInCurrentMonth(transaction)),
+  );
+
+  readonly monthlyIncome = computed(() =>
+    this.getAmount(this.currentMonthTransactions(), 'income'),
+  );
+
+  readonly monthlyExpenses = computed(() =>
+    this.getAmount(this.currentMonthTransactions(), 'expense'),
+  );
+
+  readonly netSavings = computed(() => this.monthlyIncome() - this.monthlyExpenses());
+
+  // all-time net transaction total
+  readonly netTransactionTotal = computed(
+    () =>
+      this.getAmount(this.transactions(), 'income') -
+      this.getAmount(this.transactions(), 'expense'),
+  );
+
+  readonly summaryCards = computed<SummaryCard[]>(() => [
     {
-      title: 'Total Balance',
-      amount: 48250,
-      description: 'Across tracked accounts',
+      title: 'Net Transaction Total',
+      amount: this.netTransactionTotal(),
+      description: 'All recorded income minus expenses',
       type: 'balance',
     },
     {
       title: 'Income',
-      amount: 35000,
+      amount: this.monthlyIncome(),
       description: 'Received this month',
-      trend: 8.2,
-      trendLabel: 'vs. last month',
       type: 'income',
     },
     {
       title: 'Expenses',
-      amount: 12400,
+      amount: this.monthlyExpenses(),
       description: 'Spent this month',
-      trend: 12.5,
-      trendLabel: 'vs. last month',
       type: 'expense',
     },
     {
       title: 'Net Savings',
-      amount: this.netSavings,
-      description: 'Income minus expenses',
+      amount: this.netSavings(),
+      description: 'Income minus expenses this month',
       type: 'savings',
     },
   ]);
 
-  // last six months of cash flow
-  readonly cashFlow = signal<MonthlyCashFlow[]>([
-    { month: 'May', income: 28000, expenses: 18000 },
-    { month: 'Jun', income: 32000, expenses: 21000 },
-    { month: 'Jul', income: 30000, expenses: 19500 },
-    { month: 'Aug', income: 35000, expenses: 22000 },
-    { month: 'Sep', income: 33000, expenses: 16000 },
-    { month: 'Oct', income: 35000, expenses: 12400 },
-  ]);
+  // last six calendar months, including the current month
+  readonly cashFlow = computed<MonthlyCashFlow[]>(() => {
+    const now = this.currentDate;
+
+    return Array.from({ length: 6 }, (_, index) => {
+      const date = new Date(now.getFullYear(), now.getMonth() - 5 + index, 1);
+
+      const monthKey = this.getMonthKey(date);
+
+      const monthTransactions = this.transactions().filter((transaction) => {
+        const transactionDate = this.parseTransactionDate(transaction.date);
+
+        return (
+          !Number.isNaN(transactionDate.getTime()) && this.getMonthKey(transactionDate) === monthKey
+        );
+      });
+
+      return {
+        month: new Intl.DateTimeFormat('en-IN', {
+          month: 'short',
+        }).format(date),
+        income: this.getAmount(monthTransactions, 'income'),
+        expenses: this.getAmount(monthTransactions, 'expense'),
+      };
+    });
+  });
 
   readonly maxCashFlow = computed(() =>
     Math.max(1, ...this.cashFlow().flatMap((item) => [item.income, item.expenses])),
   );
 
-  // mock spending breakdown
-  readonly spendingCategories = signal<SpendingCategory[]>([
-    {
-      name: 'Food & Dining',
-      amount: 4200,
-      budget: 6000,
-      color: 'bg-(--accent)',
-    },
-    {
-      name: 'Transport',
-      amount: 2100,
-      budget: 4000,
-      color: 'bg-(--success)',
-    },
-    {
-      name: 'Shopping',
-      amount: 1800,
-      budget: 3000,
-      color: 'bg-[#8b83d7]',
-    },
-    {
-      name: 'Bills & Utilities',
-      amount: 2500,
-      budget: 4000,
-      color: 'bg-[#d99a64]',
-    },
-  ]);
+  // current-month expense breakdown by category
+  readonly spendingCategories = computed<SpendingCategory[]>(() => {
+    const totals = new Map<string, number>();
 
-  // mock recent transactions
-  readonly recentTransactions = signal<RecentTransaction[]>([
-    {
-      id: 1,
-      title: 'Monthly groceries',
-      category: 'Food & Dining',
-      date: 'Oct 12, 2026',
-      amount: 850,
-      type: 'expense',
-      icon: 'food',
-    },
-    {
-      id: 2,
-      title: 'Fuel',
-      category: 'Transport',
-      date: 'Oct 11, 2026',
-      amount: 1500,
-      type: 'expense',
-      icon: 'transport',
-    },
-    {
-      id: 3,
-      title: 'Monthly salary',
-      category: 'Income',
-      date: 'Oct 01, 2026',
-      amount: 35000,
-      type: 'income',
-      icon: 'housing',
-    },
-    {
-      id: 4,
-      title: 'Online shopping',
-      category: 'Shopping',
-      date: 'Sep 29, 2026',
-      amount: 1800,
-      type: 'expense',
-      icon: 'shopping',
-    },
-    {
-      id: 5,
-      title: 'Electricity bill',
-      category: 'Bills & Utilities',
-      date: 'Sep 27, 2026',
-      amount: 1200,
-      type: 'expense',
-      icon: 'housing',
-    },
-  ]);
+    for (const transaction of this.currentMonthTransactions()) {
+      if (transaction.type !== 'expense') continue;
 
-  readonly totalBudget = computed(() =>
-    this.spendingCategories().reduce((total, category) => total + category.budget, 0),
-  );
+      const category = transaction.category || 'Other';
+
+      totals.set(category, (totals.get(category) ?? 0) + Number(transaction.amount || 0));
+    }
+
+    const colors: Record<string, string> = {
+      'Food & Dining': 'bg-(--accent)',
+      Transport: 'bg-(--success)',
+      Shopping: 'bg-[#8b83d7]',
+      'Bills & Utilities': 'bg-[#d99a64]',
+      Healthcare: 'bg-[#d77991]',
+      Income: 'bg-(--success)',
+      Other: 'bg-(--text-secondary)',
+    };
+
+    return Array.from(totals, ([name, amount]) => ({
+      name,
+      amount,
+      color: colors[name] ?? 'bg-(--text-secondary)',
+    })).sort((a, b) => b.amount - a.amount);
+  });
 
   readonly totalCategorySpending = computed(() =>
     this.spendingCategories().reduce((total, category) => total + category.amount, 0),
   );
 
-  readonly budgetUsed = computed(() => {
-    const budget = this.totalBudget();
+  // share of total category spending
+  categoryPercentage(category: SpendingCategory): number {
+    const total = this.totalCategorySpending();
 
-    return budget > 0 ? Math.round((this.totalCategorySpending() / budget) * 100) : 0;
-  });
+    return total > 0 ? (category.amount / total) * 100 : 0;
+  }
+
+  // five most recent transactions
+  readonly recentTransactions = computed<RecentTransaction[]>(() =>
+    [...this.transactions()]
+      .sort((a, b) => {
+        const dateDifference =
+          this.parseTransactionDate(b.date).getTime() - this.parseTransactionDate(a.date).getTime();
+
+        if (dateDifference !== 0) return dateDifference;
+
+        // use creation time as a tie-breaker for transactions on the same day.
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      })
+      .slice(0, 5)
+      .map((transaction) => ({
+        id: transaction._id,
+        title: transaction.title,
+        category: transaction.category || 'Other',
+        date: this.formatDate(transaction.date),
+        amount: Number(transaction.amount || 0),
+        type: transaction.type,
+        icon: this.getCategoryIcon(transaction.category),
+      })),
+  );
+
+  private getCategoryIcon(category: string): CategoryIcon {
+    switch (category) {
+      case 'Food & Dining':
+        return 'food';
+
+      case 'Transport':
+        return 'transport';
+
+      case 'Shopping':
+        return 'shopping';
+
+      default:
+        return 'housing';
+    }
+  }
+
+  private formatDate(value: string): string {
+    const date = this.parseTransactionDate(value);
+
+    if (Number.isNaN(date.getTime())) return 'Unknown date';
+
+    return new Intl.DateTimeFormat('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(date);
+  }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(amount);
+    return this.currencyService.format(amount);
   }
 
   barHeight(amount: number): number {
     return (amount / this.maxCashFlow()) * 100;
   }
 
-  categoryPercentage(category: SpendingCategory): number {
-    return category.budget > 0 ? Math.min((category.amount / category.budget) * 100, 100) : 0;
-  }
-
-  trackTransaction(_index: number, transaction: RecentTransaction): number {
+  trackTransaction(_index: number, transaction: RecentTransaction): string {
     return transaction.id;
   }
 
-  private readonly router = inject(Router);
+  constructor() {
+    this.loadTransactions();
+  }
+
+  loadTransactions(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.transactionService.getTransactions().subscribe({
+      next: (response) => {
+        this.transactions.set(response.data ?? []);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Failed to load overview transactions:', error);
+        this.errorMessage.set('Unable to load your financial data. Please try again.');
+        this.isLoading.set(false);
+      },
+    });
+  }
 
   openNewTransaction(): void {
     this.router.navigate(['/dashboard/transactions'], {
