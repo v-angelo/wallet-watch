@@ -17,19 +17,19 @@ import { environment } from '../../../environments/environment';
 export class AuthService {
   private http = inject(HttpClient);
 
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = `${environment.apiUrl}`;
 
   // current authenticated user
   user = signal<User | null>(null);
 
   // register
   registerAPI(data: RegisterRequest) {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, data);
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, data);
   }
 
   // login
   loginAPI(data: LoginRequest) {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data, {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, data, {
       withCredentials: true,
     });
   }
@@ -37,7 +37,7 @@ export class AuthService {
   // logout
   logoutAPI() {
     return this.http.post<{ success: boolean; message: string }>(
-      `${this.apiUrl}/logout`,
+      `${this.apiUrl}/auth/logout`,
       {},
       { withCredentials: true },
     );
@@ -71,7 +71,7 @@ export class AuthService {
 
     this.authInitialization = new Promise<void>((resolve) => {
       this.http
-        .get<{ success: boolean; data: User }>(`${this.apiUrl}/me`, { withCredentials: true })
+        .get<{ success: boolean; data: User }>(`${this.apiUrl}/users/me`, { withCredentials: true })
         .subscribe({
           next: (response) => {
             this.user.set(response.data);

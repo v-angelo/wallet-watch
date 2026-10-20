@@ -1,0 +1,488 @@
+<div class="mx-auto w-full max-w-6xl space-y-8 pb-10">
+  <!-- page heading -->
+  <div>
+    <p class="mb-2 text-sm font-medium text-(--accent)">ACCOUNT MANAGEMENT</p>
+
+    <h1 class="text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">Settings</h1>
+
+    <p class="mt-2 text-sm text-(--text-secondary) sm:text-base">
+      Manage your profile, preferences, and account security.
+    </p>
+  </div>
+
+  <!-- section navigation -->
+  <div class="flex animate-settings-enter gap-2 overflow-x-auto border-b border-(--border) pb-3">
+    <button
+      type="button"
+      (click)="setActiveSection('profile')"
+      [class.bg-(--accent)]="activeSection() === 'profile'"
+      [class.text-black]="activeSection() === 'profile'"
+      class="shrink-0 rounded-lg px-4 py-2 text-sm font-medium text-(--text-secondary) transition hover:bg-(--bg-secondary)"
+    >
+      Profile
+    </button>
+
+    <button
+      type="button"
+      (click)="setActiveSection('preferences')"
+      [class.bg-(--accent)]="activeSection() === 'preferences'"
+      [class.text-black]="activeSection() === 'preferences'"
+      class="shrink-0 rounded-lg px-4 py-2 text-sm font-medium text-(--text-secondary) transition hover:bg-(--bg-secondary)"
+    >
+      Preferences
+    </button>
+
+    <button
+      type="button"
+      (click)="setActiveSection('security')"
+      [class.bg-(--accent)]="activeSection() === 'security'"
+      [class.text-black]="activeSection() === 'security'"
+      class="shrink-0 rounded-lg px-4 py-2 text-sm font-medium text-(--text-secondary) transition hover:bg-(--bg-secondary)"
+    >
+      Security
+    </button>
+
+    <button
+      type="button"
+      (click)="setActiveSection('account')"
+      [class.bg-(--accent)]="activeSection() === 'account'"
+      [class.text-black]="activeSection() === 'account'"
+      class="shrink-0 rounded-lg px-4 py-2 text-sm font-medium text-(--text-secondary) transition hover:bg-(--bg-secondary)"
+    >
+      Account
+    </button>
+  </div>
+
+  <!-- profile section -->
+  @if (activeSection() === 'profile') {
+    <section class="animate-settings-enter space-y-6">
+      <div class="rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 sm:p-7">
+        <div class="mb-7">
+          <h2 class="text-lg font-semibold text-(--text-primary)">Personal information</h2>
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            Update the information associated with your account.
+          </p>
+        </div>
+
+        <!-- avatar -->
+        <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <app-user-avatar [size]="80" />
+
+          <div>
+            <h3 class="font-medium text-(--text-primary)">
+              {{ authService.user()?.username || 'Your profile' }}
+            </h3>
+
+            <p class="mt-1 text-sm text-(--text-secondary)">
+              Your profile picture and account identity.
+            </p>
+
+            <p class="mt-1 text-xs text-(--text-secondary)">
+              Update your profile picture URL below to change your picture.
+            </p>
+          </div>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-5">
+          <div>
+            <label for="username" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Username
+            </label>
+
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              placeholder="Enter your username"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+            />
+
+            @if (profileForm.controls.username.touched && profileForm.controls.username.invalid) {
+              <p class="mt-2 text-sm text-(--danger)">
+                Username must contain between 2 and 30 characters.
+              </p>
+            }
+          </div>
+
+          <div>
+            <label for="email" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Email address
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="w-full cursor-not-allowed rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-secondary) opacity-75 outline-none"
+            />
+
+            <p class="mt-2 text-xs text-(--text-secondary)">Email changes aren't available yet.</p>
+          </div>
+
+          <div>
+            <label for="profilePic" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Profile picture URL
+            </label>
+
+            <input
+              id="profilePic"
+              type="url"
+              formControlName="profilePic"
+              placeholder="https://example.com/profile.jpg"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+            />
+
+            <p class="mt-2 text-xs text-(--text-secondary)">
+              Your new picture will appear after you save your changes.
+            </p>
+          </div>
+
+          <div class="flex justify-end border-t border-(--border) pt-5">
+            <button
+              type="submit"
+              class="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-3 text-sm font-semibold text-black transition hover:opacity-90"
+            >
+              <svg lucideSave [size]="17"></svg>
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  }
+
+  <!-- preferences section -->
+  @if (activeSection() === 'preferences') {
+    <section class="animate-settings-enter space-y-6">
+      <div class="rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 sm:p-7">
+        <div class="mb-7">
+          <h2 class="text-lg font-semibold text-(--text-primary)">Preferences</h2>
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            Customize how financial information appears in WalletWatch.
+          </p>
+        </div>
+
+        <form [formGroup]="preferencesForm" (ngSubmit)="savePreferences()" class="space-y-6">
+          <!-- currency -->
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 class="font-medium text-(--text-primary)">Default currency</h3>
+              <p class="mt-1 text-sm text-(--text-secondary)">
+                Choose how monetary amounts are displayed.
+              </p>
+            </div>
+
+            <div class="w-full sm:max-w-xs">
+              <select
+                id="currency"
+                formControlName="currency"
+                class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+              >
+                @for (currency of currencies; track currency.code) {
+                  <option [value]="currency.code">
+                    {{ currency.label }}
+                  </option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="border-t border-(--border)"></div>
+
+          <!-- date format -->
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 class="font-medium text-(--text-primary)">Date format</h3>
+              <p class="mt-1 text-sm text-(--text-secondary)">
+                Choose how dates appear throughout the app.
+              </p>
+            </div>
+
+            <div class="w-full sm:max-w-xs">
+              <select
+                id="dateFormat"
+                formControlName="dateFormat"
+                class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+              >
+                @for (format of dateFormats; track format.value) {
+                  <option [value]="format.value">{{ format.value }} — {{ format.example }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="border-t border-(--border)"></div>
+
+          <!-- theme -->
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-start gap-3">
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--bg-primary) text-(--accent)"
+              >
+                @if (isDarkMode()) {
+                  <svg lucideMoon [size]="19"></svg>
+                } @else {
+                  <svg lucideSun [size]="19"></svg>
+                }
+              </div>
+
+              <div>
+                <h3 class="font-medium text-(--text-primary)">Appearance</h3>
+                <p class="mt-1 text-sm text-(--text-secondary)">
+                  Switch between light and dark mode.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              (click)="toggleTheme()"
+              [attr.aria-pressed]="isDarkMode()"
+              class="flex w-fit items-center gap-3 rounded-xl border border-(--border) px-4 py-3 text-sm font-medium text-(--text-primary) transition hover:border-(--accent)"
+            >
+              <span>{{ isDarkMode() ? 'Dark mode' : 'Light mode' }}</span>
+
+              <span
+                class="relative h-6 w-11 rounded-full transition"
+                [class.bg-(--accent)]="isDarkMode()"
+                [class.bg-(--border)]="!isDarkMode()"
+              >
+                <span
+                  class="absolute top-1 h-4 w-4 rounded-full bg-white transition-all"
+                  [class.left-6]="isDarkMode()"
+                  [class.left-1]="!isDarkMode()"
+                ></span>
+              </span>
+            </button>
+          </div>
+
+          <div class="flex justify-end border-t border-(--border) pt-5">
+            <button
+              type="submit"
+              class="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-3 text-sm font-semibold text-black transition hover:opacity-90"
+            >
+              <svg lucideSave [size]="17"></svg>
+              Save preferences
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  }
+
+  <!-- security section -->
+  @if (activeSection() === 'security') {
+    <section
+      class="animate-settings-enter rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 sm:p-7"
+    >
+      <div class="mb-7 flex items-start gap-3">
+        <div
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-(--bg-primary) text-(--accent)"
+        >
+          <svg lucideShieldCheck [size]="21"></svg>
+        </div>
+
+        <div>
+          <h2 class="text-lg font-semibold text-(--text-primary)">Account security</h2>
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            Keep your WalletWatch account secure by using a strong password.
+          </p>
+        </div>
+      </div>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="space-y-5">
+        <div>
+          <label for="currentPassword" class="mb-2 block text-sm font-medium text-(--text-primary)">
+            Current password
+          </label>
+
+          <div class="relative">
+            <input
+              id="currentPassword"
+              [type]="showCurrentPassword() ? 'text' : 'password'"
+              formControlName="currentPassword"
+              autocomplete="current-password"
+              placeholder="Enter your current password"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 pr-12 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+            />
+
+            <button
+              type="button"
+              (click)="showCurrentPassword.update((value) => !value)"
+              [attr.aria-label]="showCurrentPassword() ? 'Hide password' : 'Show password'"
+              class="absolute top-1/2 right-3 -translate-y-1/2 text-(--text-secondary) hover:text-(--text-primary)"
+            >
+              @if (showCurrentPassword()) {
+                <svg lucideEyeOff [size]="18"></svg>
+              } @else {
+                <svg lucideEye [size]="18"></svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label for="newPassword" class="mb-2 block text-sm font-medium text-(--text-primary)">
+            New password
+          </label>
+
+          <div class="relative">
+            <input
+              id="newPassword"
+              [type]="showNewPassword() ? 'text' : 'password'"
+              formControlName="newPassword"
+              autocomplete="new-password"
+              placeholder="Enter a new password"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 pr-12 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+            />
+
+            <button
+              type="button"
+              (click)="showNewPassword.update((value) => !value)"
+              [attr.aria-label]="showNewPassword() ? 'Hide password' : 'Show password'"
+              class="absolute top-1/2 right-3 -translate-y-1/2 text-(--text-secondary) hover:text-(--text-primary)"
+            >
+              @if (showNewPassword()) {
+                <svg lucideEyeOff [size]="18"></svg>
+              } @else {
+                <svg lucideEye [size]="18"></svg>
+              }
+            </button>
+          </div>
+
+          @if (
+            passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.invalid
+          ) {
+            <p class="mt-2 text-sm text-(--danger)">
+              Password must contain between 8 and 72 characters.
+            </p>
+          }
+        </div>
+
+        <div>
+          <label for="confirmPassword" class="mb-2 block text-sm font-medium text-(--text-primary)">
+            Confirm new password
+          </label>
+
+          <div class="relative">
+            <input
+              id="confirmPassword"
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              autocomplete="new-password"
+              placeholder="Re-enter your new password"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 pr-12 text-sm text-(--text-primary) outline-none focus:border-(--accent)"
+            />
+
+            <button
+              type="button"
+              (click)="showConfirmPassword.update((value) => !value)"
+              [attr.aria-label]="showConfirmPassword() ? 'Hide password' : 'Show password'"
+              class="absolute top-1/2 right-3 -translate-y-1/2 text-(--text-secondary) hover:text-(--text-primary)"
+            >
+              @if (showConfirmPassword()) {
+                <svg lucideEyeOff [size]="18"></svg>
+              } @else {
+                <svg lucideEye [size]="18"></svg>
+              }
+            </button>
+          </div>
+
+          @if (passwordForm.controls.confirmPassword.hasError('passwordMismatch')) {
+            <p class="mt-2 text-sm text-(--danger)">The passwords don't match.</p>
+          }
+        </div>
+
+        <div class="flex justify-end border-t border-(--border) pt-5">
+          <button
+            type="submit"
+            class="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-5 py-3 text-sm font-semibold text-black transition hover:opacity-90"
+          >
+            <svg lucideLockKeyhole [size]="17"></svg>
+            Change password
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  <!-- account management section -->
+  @if (activeSection() === 'account') {
+    <section class="animate-settings-enter space-y-6">
+      <div class="rounded-2xl border border-red-500/30 bg-(--bg-secondary) p-5 sm:p-7">
+        <div class="mb-5 flex items-start gap-3">
+          <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-500"
+          >
+            <svg lucideAlertTriangle [size]="21"></svg>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-semibold text-(--text-primary)">Deactivate account</h2>
+            <p class="mt-1 text-sm leading-6 text-(--text-secondary)">
+              Temporarily disable access to your WalletWatch account. You won't be able to log in
+              while your account is inactive.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          (click)="confirmDeactivateAccount()"
+          class="rounded-xl border border-red-500/40 px-4 py-2.5 text-sm font-semibold text-red-500 transition hover:bg-red-500/10"
+        >
+          Deactivate my account
+        </button>
+      </div>
+    </section>
+  }
+</div>
+
+<!-- deactivation confirmation dialog -->
+@if (showDeactivateConfirmation()) {
+  <div
+    class="fixed inset-0 z-50 flex animate-settings-enter items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+    (click)="cancelDeactivateAccount()"
+  >
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deactivate-title"
+      class="w-full max-w-md rounded-2xl border border-(--border) bg-(--bg-secondary) p-6 shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500"
+      >
+        <svg lucideAlertTriangle [size]="23"></svg>
+      </div>
+
+      <h2 id="deactivate-title" class="text-lg font-semibold text-(--text-primary)">
+        Deactivate your account?
+      </h2>
+
+      <p class="mt-2 text-sm leading-6 text-(--text-secondary)">
+        You will lose access to WalletWatch until an administrator reactivates your account. Your
+        data will not be permanently deleted.
+      </p>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          type="button"
+          (click)="cancelDeactivateAccount()"
+          class="rounded-xl border border-(--border) px-4 py-2.5 text-sm font-medium text-(--text-primary) transition hover:bg-(--bg-primary)"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          (click)="deactivateAccount()"
+          class="rounded-xl bg-red-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600"
+        >
+          Confirm deactivation
+        </button>
+      </div>
+    </div>
+  </div>
+}
