@@ -1,21 +1,23 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { User } from '../models/user.model';
 import {
   RegisterResponse,
   RegisterRequest,
   LoginRequest,
   LoginResponse,
-  User,
 } from '../models/auth.model';
 
 import { environment } from '../../../environments/environment';
+import { ThemeService } from './theme.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private readonly themeService = inject(ThemeService);
 
   private apiUrl = `${environment.apiUrl}`;
 
@@ -46,6 +48,10 @@ export class AuthService {
   // set current user
   setUser(user: User | null): void {
     this.user.set(user);
+
+    if (user?.preferredTheme) {
+      this.themeService.setTheme(user.preferredTheme);
+    }
   }
 
   // get current user
@@ -74,7 +80,7 @@ export class AuthService {
         .get<{ success: boolean; data: User }>(`${this.apiUrl}/users/me`, { withCredentials: true })
         .subscribe({
           next: (response) => {
-            this.user.set(response.data);
+            this.setUser(response.data);
             this.authInitialized.set(true);
             resolve();
           },

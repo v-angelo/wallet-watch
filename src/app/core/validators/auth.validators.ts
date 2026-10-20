@@ -44,3 +44,16 @@ export const passwordMatchValidator: ValidatorFn = (
 
   return password === confirmPassword ? null : { passwordMismatch: true };
 };
+
+export const matchFieldsValidator = (firstField: string, secondField: string): ValidatorFn => {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const firstValue = control.get(firstField)?.value;
+    const secondValue = control.get(secondField)?.value;
+
+    if (!firstValue || !secondValue) {
+      return null;
+    }
+
+    return firstValue === secondValue ? null : { passwordMismatch: true };
+  };
+};
