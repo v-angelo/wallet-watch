@@ -1,20 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
-import {
-  LucideChevronDown,
-  LucideLogOut,
-  LucideMenu,
-  LucideMoon,
-  LucideSettings,
-  LucideSun,
-  LucideUserRound,
-  LucideWallet,
-  LucideX,
-} from '@lucide/angular';
-import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { UserAvatar } from '../../layouts/user-avatar/user-avatar';
+
+import { LucideMenu, LucideMoon, LucideSun, LucideWallet, LucideX } from '@lucide/angular';
+
+import { AuthService } from '../../core/services/auth.service';
+import { UserAvatar } from '../user-avatar/user-avatar';
 import { ToastService } from '../../core/services/toast.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { ProfileMenu } from '../profile-menu/profile-menu';
 
 @Component({
   imports: [
@@ -22,13 +15,10 @@ import { ThemeService } from '../../core/services/theme.service';
     LucideMenu,
     LucideMoon,
     LucideSun,
-    LucideChevronDown,
-    LucideUserRound,
-    LucideSettings,
-    LucideLogOut,
     LucideX,
     RouterLink,
     UserAvatar,
+    ProfileMenu,
   ],
   selector: 'app-navbar',
   styleUrl: './navbar.css',
@@ -64,7 +54,6 @@ export class Navbar {
 
   logout(): void {
     this.closeMobileMenu();
-    this.closeProfileMenu();
 
     this.authService.logoutAPI().subscribe({
       next: (response) => {
@@ -94,15 +83,5 @@ export class Navbar {
 
   closeMobileMenu(): void {
     this.mobileMenuOpen.set(false);
-  }
-
-  profileMenuOpen = false;
-
-  toggleProfileMenu(): void {
-    this.profileMenuOpen = !this.profileMenuOpen;
-  }
-
-  closeProfileMenu(): void {
-    this.profileMenuOpen = false;
   }
 }

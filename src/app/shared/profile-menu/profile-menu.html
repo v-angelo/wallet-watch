@@ -1,0 +1,72 @@
+@if (authService.user(); as user) {
+  <div class="relative">
+    <button
+      type="button"
+      aria-label="Open profile menu"
+      [attr.aria-expanded]="profileMenuOpen"
+      aria-haspopup="true"
+      (click)="toggleProfileMenu()"
+      class="flex items-center gap-2 rounded-xl p-1.5 transition-colors hover:bg-(--border) sm:px-2"
+    >
+      <app-user-avatar />
+
+      <span class="hidden text-left sm:block">
+        <span class="block text-sm font-semibold text-(--text-primary)">
+          {{ user.username }}
+        </span>
+
+        <span class="block text-xs text-(--text-secondary)">
+          {{ user.email }}
+        </span>
+      </span>
+
+      <svg
+        lucideChevronDown
+        [size]="16"
+        class="hidden text-(--text-secondary) transition-transform sm:block"
+        [class.rotate-180]="profileMenuOpen"
+      ></svg>
+    </button>
+
+    @if (profileMenuOpen) {
+      <div
+        class="absolute top-full right-0 z-50 mt-3 w-56 origin-top-right animate-fade-left rounded-xl border border-(--border) bg-(--bg-secondary) p-2 shadow-xl"
+      >
+        <!-- profile summary for smaller screens -->
+        <div class="flex items-center gap-3 border-b border-(--border) px-3 py-3 sm:hidden">
+          <app-user-avatar />
+
+          <div class="min-w-0">
+            <p class="truncate text-sm font-semibold text-(--text-primary)">
+              {{ user.username }}
+            </p>
+
+            <p class="truncate text-xs text-(--text-secondary)">
+              {{ user.email }}
+            </p>
+          </div>
+        </div>
+
+        <a
+          routerLink="/dashboard/settings"
+          (click)="closeProfileMenu()"
+          class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+        >
+          <svg lucideSettings [size]="18"></svg>
+          Settings
+        </a>
+
+        <div class="my-1 border-t border-(--border)"></div>
+
+        <button
+          type="button"
+          (click)="onLogout()"
+          class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-(--danger) transition-colors hover:bg-(--danger)/10"
+        >
+          <svg lucideLogOut [size]="18"></svg>
+          Log out
+        </button>
+      </div>
+    }
+  </div>
+}

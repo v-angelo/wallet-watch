@@ -11,7 +11,7 @@ import {
   LucideLogOut,
   LucideX,
 } from '@lucide/angular';
-import { UserAvatar } from '../../user-avatar/user-avatar';
+import { UserAvatar } from '../../../shared/user-avatar/user-avatar';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({

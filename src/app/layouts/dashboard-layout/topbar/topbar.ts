@@ -1,33 +1,19 @@
 import { Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
-import {
-  LucideSun,
-  LucideMoon,
-  LucideChevronDown,
-  LucideUserRound,
-  LucideSettings,
-  LucideLogOut,
-  LucideMenu,
-} from '@lucide/angular';
+
+import { LucideSun, LucideMoon, LucideMenu } from '@lucide/angular';
+
 import { AuthService } from '../../../core/services/auth.service';
-import { UserAvatar } from '../../user-avatar/user-avatar';
 import { ThemeService } from '../../../core/services/theme.service';
-import { NavigationEnd, Router } from '@angular/router';
+import { ProfileMenu } from '../../../shared/profile-menu/profile-menu';
+
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [
-    LucideSun,
-    LucideMoon,
-    LucideChevronDown,
-    LucideUserRound,
-    LucideSettings,
-    LucideLogOut,
-    LucideMenu,
-    UserAvatar,
-  ],
+  imports: [LucideSun, LucideMoon, LucideMenu, ProfileMenu],
   templateUrl: './topbar.html',
 })
 export class Topbar {
