@@ -26,6 +26,7 @@ import {
 } from '../../../core/services/budget.service';
 
 import { CurrencyService } from '../../../core/services/currency.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-budgets',
@@ -50,6 +51,7 @@ import { CurrencyService } from '../../../core/services/currency.service';
 export class Budgets {
   private readonly budgetService = inject(BudgetService);
   private readonly currencyService = inject(CurrencyService);
+  private readonly toastService = inject(ToastService);
 
   readonly categories = BUDGET_CATEGORIES;
   readonly budgets = signal<BudgetData[]>([]);
@@ -256,6 +258,12 @@ export class Budgets {
 
     request.subscribe({
       next: (response) => {
+        if (budgetId) {
+          this.toastService.success(response.message || 'Budget updated successfully!');
+        } else {
+          this.toastService.success(response.message || 'Budget created successfully!');
+        }
+
         this.isSaving.set(false);
         this.isFormOpen.set(false);
         this.editingBudgetId.set(null);
@@ -287,6 +295,8 @@ export class Budgets {
 
     this.budgetService.deleteBudget(budget._id).subscribe({
       next: (response) => {
+        this.toastService.success(response.message || 'Budget deleted successfully!');
+
         this.isDeleting.set(null);
         this.successMessage.set(response.message);
         this.loadBudgets();

@@ -187,10 +187,7 @@ export class Settings {
           this.toastService.show(response.message || 'Profile updated successfully!', 'success');
         },
         error: (error: unknown) => {
-          this.toastService.show(
-            this.getErrorMessage(error, 'Failed to update your profile.'),
-            'error',
-          );
+          console.error('Failed to update your profile!', error);
         },
       });
   }
@@ -260,10 +257,7 @@ export class Settings {
           this.toastService.show(response.message || 'Preferences saved successfully!', 'success');
         },
         error: (error: unknown) => {
-          this.toastService.show(
-            this.getErrorMessage(error, 'Failed to save your preferences.'),
-            'error',
-          );
+          console.error('Failed to save your preferences!', error);
         },
       });
   }
@@ -286,12 +280,9 @@ export class Settings {
         this.themeService.toggleTheme();
         this.isDarkMode.set(previousTheme === 'dark');
 
-        this.toastService.show(
-          this.getErrorMessage(
-            error,
-            'Could not save your theme preference. Your previous theme has been restored.',
-          ),
-          'error',
+        console.error(
+          'Could not save your theme preference. Your previous theme has been restored!',
+          error,
         );
       },
     });
@@ -331,10 +322,7 @@ export class Settings {
           this.toastService.show(response.message || 'Password changed successfully!', 'success');
         },
         error: (error: unknown) => {
-          this.toastService.show(
-            this.getErrorMessage(error, 'Failed to change your password.'),
-            'error',
-          );
+          console.error('Failed to change your password:', error);
         },
       });
   }
@@ -381,10 +369,7 @@ export class Settings {
           void this.router.navigateByUrl('/');
         },
         error: (error: unknown) => {
-          this.toastService.show(
-            this.getErrorMessage(error, 'Failed to deactivate your account.'),
-            'error',
-          );
+          console.error('Failed to deactivate your account!', error);
         },
       });
   }

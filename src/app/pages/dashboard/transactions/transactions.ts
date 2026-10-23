@@ -27,6 +27,7 @@ import { TransactionData, TransactionService } from '../../../core/services/tans
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { TransactionFormModal } from './transaction-form-modal/transaction-form-modal';
+import { ToastService } from '../../../core/services/toast.service';
 
 type TransactionType = 'income' | 'expense';
 
@@ -76,6 +77,8 @@ export class Transactions implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   protected currencyService = inject(CurrencyService);
+
+  private readonly toastService = inject(ToastService);
 
   ngOnInit(): void {
     this.loadTransactions();
@@ -361,8 +364,12 @@ export class Transactions implements OnInit {
           this.transactions.update((items) =>
             items.map((item) => (item.id === editingId ? updated : item)),
           );
+
+          this.toastService.success(response.message || 'Transaction updated successfully!');
         } else {
           this.transactions.update((items) => [updated, ...items]);
+
+          this.toastService.success(response.message || 'Transaction added successfully!');
         }
 
         // Show the changed transaction even if it belongs to another month.
@@ -422,7 +429,9 @@ export class Transactions implements OnInit {
       next: () => {
         this.transactions.update((items) => items.filter((item) => item.id !== transaction.id));
 
-        // Return to the previous page if the current page becomes empty.
+        this.toastService.success('Transaction deleted successfully!');
+
+        // return to the previous page if the current page becomes empty.
         this.currentPage.update((page) => Math.min(page, this.totalPages()));
       },
       error: (error: HttpErrorResponse) => {
