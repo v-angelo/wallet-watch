@@ -1,0 +1,661 @@
+<main class="mx-auto w-full max-w-[1600px] space-y-7 p-5 sm:p-6 lg:p-8">
+  <!-- page heading -->
+  <section class="flex animate-fade-up flex-col justify-between gap-5 sm:flex-row sm:items-center">
+    <div>
+      <p class="mb-1 text-sm font-medium text-(--accent)">PLAN WITH PURPOSE</p>
+
+      <h1 class="text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">Budgets</h1>
+
+      <p class="mt-2 text-sm text-(--text-secondary)">
+        Set spending limits and stay on top of your expenses.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 max-sm:flex-col">
+      <div class="flex min-w-0 items-center gap-2">
+        <button
+          type="button"
+          (click)="changeMonth(-1)"
+          aria-label="Previous month"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-primary) hover:text-(--text-primary)"
+        >
+          <svg lucideChevronLeft [size]="18"></svg>
+        </button>
+
+        <div
+          class="flex min-w-36 items-center justify-center gap-2 px-2 text-sm font-medium text-(--text-primary)"
+        >
+          <svg lucideCalendarDays [size]="16" class="text-(--accent)"></svg>
+          {{ monthLabel() }}
+        </div>
+
+        <button
+          type="button"
+          (click)="changeMonth(1)"
+          [disabled]="isFutureMonth()"
+          aria-label="Next month"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-primary) hover:text-(--text-primary) disabled:cursor-not-allowed disabled:opacity-30"
+        >
+          <svg lucideChevronRight [size]="18"></svg>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        (click)="openCreateForm('category')"
+        class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-(--accent) px-3 py-2.5 text-sm font-semibold text-black transition hover:opacity-90 sm:px-4"
+      >
+        <svg lucidePlus [size]="18"></svg>
+        <span>Add Budget</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- notifications -->
+  @if (successMessage()) {
+    <div
+      class="flex animate-fade-up items-center justify-between gap-3 rounded-xl border border-(--success)/30 bg-(--bg-secondary) p-4"
+      role="status"
+    >
+      <p class="text-sm text-(--success)">{{ successMessage() }}</p>
+
+      <button
+        type="button"
+        (click)="successMessage.set('')"
+        aria-label="Dismiss success message"
+        class="text-(--text-secondary) hover:text-(--text-primary)"
+      >
+        <svg lucideX [size]="17"></svg>
+      </button>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div
+      class="flex items-start gap-3 rounded-xl border border-(--danger)/30 bg-(--bg-secondary) p-4"
+      role="alert"
+    >
+      <svg lucideCircleAlert [size]="19" class="mt-0.5 shrink-0 text-(--danger)"></svg>
+
+      <div class="min-w-0 flex-1">
+        <p class="text-sm text-(--danger)">{{ errorMessage() }}</p>
+      </div>
+
+      <button
+        type="button"
+        (click)="errorMessage.set('')"
+        aria-label="Dismiss error message"
+        class="text-(--text-secondary) hover:text-(--text-primary)"
+      >
+        <svg lucideX [size]="17"></svg>
+      </button>
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div
+      class="rounded-2xl border border-(--border) bg-(--bg-secondary) p-8 text-center"
+      role="status"
+    >
+      <svg lucideRefreshCw [size]="22" class="mx-auto animate-spin text-(--accent)"></svg>
+      <p class="mt-3 text-sm text-(--text-secondary)">Loading your budgets...</p>
+    </div>
+  } @else if (errorMessage() && budgets().length === 0) {
+    <section
+      class="animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-8 text-center"
+    >
+      <p class="text-sm text-(--text-secondary)">
+        We couldn't retrieve your budgets for this month.
+      </p>
+
+      <button
+        type="button"
+        (click)="loadBudgets()"
+        class="mt-4 inline-flex items-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-semibold text-(--bg-primary) transition-colors hover:bg-(--accent-hover)"
+      >
+        <svg lucideRefreshCw [size]="16"></svg>
+        Try again
+      </button>
+    </section>
+  } @else {
+    <!-- summary cards -->
+    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <article
+        class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-sm font-medium text-(--text-secondary)">Total Budget Limit</p>
+
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+          >
+            <svg lucideWallet [size]="20"></svg>
+          </div>
+        </div>
+
+        <p class="mt-5 text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
+          {{ formatCurrency(summaryLimit()) }}
+        </p>
+
+        <p class="mt-2 text-xs text-(--text-secondary)">
+          {{
+            overallBudget()
+              ? 'Your overall monthly spending limit'
+              : 'Combined category budget limits'
+          }}
+        </p>
+      </article>
+
+      <article
+        class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+        style="animation-delay: 80ms"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-sm font-medium text-(--text-secondary)">Total Spent</p>
+
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+          >
+            <svg lucideTarget [size]="20"></svg>
+          </div>
+        </div>
+
+        <p class="mt-5 text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
+          {{ formatCurrency(summarySpent()) }}
+        </p>
+
+        <p class="mt-2 text-xs text-(--text-secondary)">
+          {{ Math.round(summaryPercentage()) }}% of the budget limit used
+        </p>
+      </article>
+
+      <article
+        class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg sm:col-span-2 xl:col-span-1"
+        style="animation-delay: 160ms"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-sm font-medium text-(--text-secondary)">Remaining Budget</p>
+
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--success)/10 text-(--success)"
+          >
+            <svg lucideWallet [size]="20"></svg>
+          </div>
+        </div>
+
+        <p
+          class="mt-5 text-2xl font-bold tracking-tight sm:text-3xl"
+          [class.text-(--success)]="summaryRemaining() >= 0"
+          [class.text-(--danger)]="summaryRemaining() < 0"
+        >
+          {{ formatCurrency(summaryRemaining()) }}
+        </p>
+
+        <p class="mt-2 text-xs text-(--text-secondary)">
+          {{
+            summaryRemaining() >= 0
+              ? 'Available to spend within your limit'
+              : 'Amount spent beyond your limit'
+          }}
+        </p>
+      </article>
+    </section>
+
+    <!-- overall budget -->
+    <section class="animate-fade-up">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-semibold text-(--text-primary)">Overall Budget</h2>
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            Your spending limit across all expense categories.
+          </p>
+        </div>
+
+        @if (!overallBudget()) {
+          <button
+            type="button"
+            (click)="openCreateForm('overall')"
+            class="inline-flex items-center gap-2 rounded-xl border border-(--border) px-3 py-2 text-sm font-semibold text-(--text-primary) transition-colors hover:border-(--accent)/50 hover:bg-(--bg-secondary)"
+          >
+            <svg lucidePlus [size]="16"></svg>
+            Set overall budget
+          </button>
+        }
+      </div>
+
+      @if (overallBudget(); as budget) {
+        <article
+          class="animate-fade-right rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 sm:p-6"
+        >
+          <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+            <div class="flex items-start gap-3">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+              >
+                <svg lucideWallet [size]="23"></svg>
+              </div>
+
+              <div>
+                <h3 class="font-semibold text-(--text-primary)">Monthly spending limit</h3>
+                <p class="mt-1 text-sm text-(--text-secondary)">
+                  {{ formatCurrency(budget.spent ?? 0) }} spent of
+                  {{ formatCurrency(budget.amount) }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 self-end sm:self-auto">
+              <button
+                type="button"
+                (click)="openEditForm(budget)"
+                aria-label="Edit overall budget"
+                class="flex h-9 w-9 items-center justify-center rounded-lg border border-(--border) text-(--text-secondary) transition-colors hover:border-(--accent)/50 hover:text-(--accent)"
+              >
+                <svg lucidePencil [size]="16"></svg>
+              </button>
+
+              <button
+                type="button"
+                (click)="deleteBudget(budget)"
+                [disabled]="isDeleting() === budget._id"
+                aria-label="Delete overall budget"
+                class="flex h-9 w-9 items-center justify-center rounded-lg border border-(--border) text-(--text-secondary) transition-colors hover:border-(--danger)/50 hover:text-(--danger) disabled:opacity-50"
+              >
+                <svg lucideTrash [size]="16"></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between gap-3 text-sm">
+            <span class="text-(--text-secondary)">Budget used</span>
+
+            <span
+              class="font-semibold"
+              [class.text-(--danger)]="isOverBudget(budget)"
+              [class.text-(--accent)]="!isOverBudget(budget) && isNearLimit(budget)"
+              [class.text-(--text-primary)]="!isOverBudget(budget) && !isNearLimit(budget)"
+            >
+              {{ Math.round(budget.percentageUsed ?? 0) }}%
+            </span>
+          </div>
+
+          <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-(--border)">
+            <div
+              class="h-full rounded-full transition-all duration-700"
+              [class.bg-(--danger)]="isOverBudget(budget)"
+              [class.bg-(--accent)]="!isOverBudget(budget) && isNearLimit(budget)"
+              [class.bg-(--success)]="!isOverBudget(budget) && !isNearLimit(budget)"
+              [style.width.%]="progressPercentage(budget)"
+            ></div>
+          </div>
+
+          <div class="mt-3 flex flex-wrap justify-between gap-2 text-xs">
+            <span class="text-(--text-secondary)">
+              {{ formatCurrency(budget.spent ?? 0) }} spent
+            </span>
+
+            <span
+              [class.text-(--danger)]="isOverBudget(budget)"
+              [class.text-(--success)]="!isOverBudget(budget)"
+            >
+              {{ isOverBudget(budget) ? 'Exceeded by ' : 'Remaining ' }}
+              {{ formatCurrency(Math.abs(budget.remaining ?? budget.amount)) }}
+            </span>
+          </div>
+
+          @if (isOverBudget(budget)) {
+            <p class="mt-4 rounded-xl bg-(--danger)/10 px-3 py-2.5 text-sm text-(--danger)">
+              You've exceeded your overall budget for this month.
+            </p>
+          } @else if (isNearLimit(budget)) {
+            <p class="mt-4 rounded-xl bg-(--accent)/10 px-3 py-2.5 text-sm text-(--accent)">
+              You're approaching your overall spending limit.
+            </p>
+          }
+        </article>
+      } @else {
+        <div
+          class="animate-fade-up rounded-2xl border border-dashed border-(--border) bg-(--bg-secondary) px-5 py-8 text-center"
+        >
+          <div
+            class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+          >
+            <svg lucideWallet [size]="23"></svg>
+          </div>
+
+          <h3 class="mt-4 text-sm font-semibold text-(--text-primary)">No overall budget yet</h3>
+
+          <p class="mx-auto mt-1 max-w-md text-sm text-(--text-secondary)">
+            Set one limit for all your expenses to get a clearer picture of your monthly spending.
+          </p>
+        </div>
+      }
+    </section>
+
+    @if (categoryBudgetExceedsOverall()) {
+      <div
+        class="flex animate-fade-up items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4"
+        role="status"
+      >
+        <svg
+          lucideTriangleAlert
+          [size]="20"
+          class="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400"
+        ></svg>
+
+        <div class="min-w-0">
+          <p class="font-semibold text-(--text-primary)">
+            Category budgets exceed your overall budget
+          </p>
+
+          <p class="mt-1 text-sm leading-6 text-(--text-secondary)">
+            Your category budgets total
+            <strong>{{ formatCurrency(totalCategoryBudget()) }}</strong
+            >, which is
+            <strong>{{ formatCurrency(categoryBudgetExcess()) }}</strong>
+            above your overall monthly budget. Consider adjusting your category limits.
+          </p>
+        </div>
+      </div>
+    }
+
+    <!-- category budgets -->
+    <section>
+      <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 class="text-base font-semibold text-(--text-primary)">Category Budgets</h2>
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            Keep track of how much you're spending in each category.
+          </p>
+        </div>
+
+        <span
+          class="rounded-lg bg-(--bg-secondary) px-3 py-1.5 text-xs font-medium text-(--text-secondary)"
+        >
+          {{ categoryBudgets().length }}
+          {{ categoryBudgets().length === 1 ? 'category' : 'categories' }}
+        </span>
+      </div>
+
+      @if (categoryBudgets().length > 0) {
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+          @for (budget of categoryBudgets(); track trackBudget($index, budget); let i = $index) {
+            <article
+              class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+              [style.animation-delay.ms]="i * 70"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex min-w-0 items-center gap-3">
+                  <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+                  >
+                    <svg lucideTarget [size]="20"></svg>
+                  </div>
+
+                  <div class="min-w-0">
+                    <h3 class="truncate text-sm font-semibold text-(--text-primary)">
+                      {{ budget.category }}
+                    </h3>
+
+                    <p class="mt-1 text-xs text-(--text-secondary)">Monthly limit</p>
+                  </div>
+                </div>
+
+                <div class="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    (click)="openEditForm(budget)"
+                    [attr.aria-label]="'Edit ' + budget.category + ' budget'"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-primary) hover:text-(--accent)"
+                  >
+                    <svg lucidePencil [size]="15"></svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="deleteBudget(budget)"
+                    [disabled]="isDeleting() === budget._id"
+                    [attr.aria-label]="'Delete ' + budget.category + ' budget'"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--danger)/10 hover:text-(--danger) disabled:opacity-50"
+                  >
+                    <svg lucideTrash [size]="15"></svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-end justify-between gap-3">
+                <div>
+                  <p class="text-2xl font-bold tracking-tight text-(--text-primary)">
+                    {{ formatCurrency(budget.spent ?? 0) }}
+                  </p>
+                  <p class="mt-1 text-xs text-(--text-secondary)">spent so far</p>
+                </div>
+
+                <div class="text-right">
+                  <p class="text-sm font-semibold text-(--text-primary)">
+                    {{ formatCurrency(budget.amount) }}
+                  </p>
+                  <p class="mt-1 text-xs text-(--text-secondary)">budget limit</p>
+                </div>
+              </div>
+
+              <div class="mt-5 flex items-center justify-between gap-2 text-xs">
+                <span class="text-(--text-secondary)">Progress</span>
+
+                <span
+                  class="font-semibold"
+                  [class.text-(--danger)]="isOverBudget(budget)"
+                  [class.text-(--accent)]="!isOverBudget(budget) && isNearLimit(budget)"
+                  [class.text-(--text-primary)]="!isOverBudget(budget) && !isNearLimit(budget)"
+                >
+                  {{ Math.round(budget.percentageUsed ?? 0) }}%
+                </span>
+              </div>
+
+              <div class="mt-2 h-2 overflow-hidden rounded-full bg-(--border)">
+                <div
+                  class="h-full rounded-full transition-all duration-700"
+                  [class.bg-(--danger)]="isOverBudget(budget)"
+                  [class.bg-(--accent)]="!isOverBudget(budget) && isNearLimit(budget)"
+                  [class.bg-(--success)]="!isOverBudget(budget) && !isNearLimit(budget)"
+                  [style.width.%]="progressPercentage(budget)"
+                ></div>
+              </div>
+
+              <div class="mt-3 flex items-center justify-between gap-2">
+                <span class="text-xs text-(--text-secondary)">
+                  {{ isOverBudget(budget) ? 'Over budget' : 'Remaining' }}
+                </span>
+
+                <span
+                  class="text-xs font-semibold"
+                  [class.text-(--danger)]="isOverBudget(budget)"
+                  [class.text-(--success)]="!isOverBudget(budget)"
+                >
+                  {{ formatCurrency(Math.abs(budget.remaining ?? budget.amount)) }}
+                </span>
+              </div>
+
+              @if (isOverBudget(budget)) {
+                <p class="mt-4 text-xs font-medium text-(--danger)">
+                  You've exceeded this category's budget.
+                </p>
+              } @else if (isNearLimit(budget)) {
+                <p class="mt-4 text-xs font-medium text-(--accent)">
+                  You're getting close to this budget limit.
+                </p>
+              }
+            </article>
+          }
+        </div>
+      } @else {
+        <div
+          class="animate-fade-up rounded-2xl border border-dashed border-(--border) bg-(--bg-secondary) px-5 py-10 text-center"
+        >
+          <div
+            class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+          >
+            <svg lucideTarget [size]="23"></svg>
+          </div>
+
+          <h3 class="mt-4 text-sm font-semibold text-(--text-primary)">
+            No category budgets for {{ monthLabel() }}
+          </h3>
+
+          <p class="mx-auto mt-1 max-w-md text-sm text-(--text-secondary)">
+            Create category limits to keep your everyday expenses under control.
+          </p>
+
+          <button
+            type="button"
+            (click)="openCreateForm('category')"
+            class="mt-5 inline-flex items-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-semibold text-(--bg-primary) transition-colors hover:bg-(--accent-hover)"
+          >
+            <svg lucidePlus [size]="16"></svg>
+            Create category budget
+          </button>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- create / edit budget form -->
+  @if (isFormOpen()) {
+    <div
+      class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      (click)="closeForm()"
+    >
+      <section
+        class="w-full max-w-lg animate-fade-up rounded-t-2xl border border-(--border) bg-(--bg-secondary) p-5 shadow-2xl sm:rounded-2xl sm:p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="budget-form-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h2 id="budget-form-title" class="text-lg font-bold text-(--text-primary)">
+              {{ editingBudgetId() ? 'Edit Budget' : 'Create Budget' }}
+            </h2>
+
+            <p class="mt-1 text-sm text-(--text-secondary)">
+              Set a spending limit for {{ monthLabel() }}.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            (click)="closeForm()"
+            [disabled]="isSaving()"
+            aria-label="Close budget form"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-primary) hover:text-(--text-primary)"
+          >
+            <svg lucideX [size]="19"></svg>
+          </button>
+        </div>
+
+        <form (ngSubmit)="saveBudget()" #budgetForm="ngForm" class="space-y-5">
+          <div>
+            <label for="budgetType" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Budget type
+            </label>
+
+            <select
+              id="budgetType"
+              name="budgetType"
+              [(ngModel)]="budgetType"
+              required
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none focus:border-(--accent)"
+            >
+              <option value="overall">Overall budget</option>
+              <option value="category">Category budget</option>
+            </select>
+          </div>
+
+          @if (budgetType === 'category') {
+            <div>
+              <label
+                for="budgetCategory"
+                class="mb-2 block text-sm font-medium text-(--text-primary)"
+              >
+                Expense category
+              </label>
+
+              <select
+                id="budgetCategory"
+                name="budgetCategory"
+                [(ngModel)]="selectedCategory"
+                required
+                class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none focus:border-(--accent)"
+              >
+                @for (category of categories; track category) {
+                  <option [value]="category">{{ category }}</option>
+                }
+              </select>
+            </div>
+          }
+
+          <div>
+            <label for="budgetAmount" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Budget limit
+            </label>
+
+            <div class="relative">
+              <input
+                id="budgetAmount"
+                name="budgetAmount"
+                type="number"
+                [(ngModel)]="budgetAmount"
+                required
+                min="0.01"
+                step="0.01"
+                placeholder="Enter amount"
+                class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+              />
+            </div>
+
+            <p class="mt-2 text-xs text-(--text-secondary)">
+              Amounts are displayed in your account's preferred currency.
+            </p>
+          </div>
+
+          <div class="rounded-xl bg-(--bg-primary) p-4">
+            <div class="flex items-center justify-between gap-3 text-sm">
+              <span class="text-(--text-secondary)">Budget period</span>
+              <span class="font-medium text-(--text-primary)">{{ monthLabel() }}</span>
+            </div>
+          </div>
+
+          @if (errorMessage()) {
+            <p class="text-sm text-(--danger)" role="alert">{{ errorMessage() }}</p>
+          }
+
+          <div class="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              (click)="closeForm()"
+              [disabled]="isSaving()"
+              class="rounded-xl border border-(--border) px-4 py-3 text-sm font-semibold text-(--text-primary) transition-colors hover:bg-(--bg-primary) disabled:opacity-50 sm:py-2.5"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              [disabled]="isSaving() || budgetForm.invalid"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-(--accent) px-5 py-3 text-sm font-semibold text-(--bg-primary) transition-colors hover:bg-(--accent-hover) disabled:cursor-not-allowed disabled:opacity-50 sm:py-2.5"
+            >
+              @if (isSaving()) {
+                <svg lucideRefreshCw [size]="16" class="animate-spin"></svg>
+                Saving...
+              } @else {
+                <svg lucidePlus [size]="16"></svg>
+                {{ editingBudgetId() ? 'Save changes' : 'Create budget' }}
+              }
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+</main>

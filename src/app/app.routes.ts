@@ -11,6 +11,7 @@ import { Settings } from './pages/dashboard/settings/settings';
 
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { Budgets } from './pages/dashboard/budgets/budgets';
 
 export const routes: Routes = [
   {
@@ -42,6 +43,10 @@ export const routes: Routes = [
           {
             path: 'transactions',
             component: Transactions,
+          },
+          {
+            path: 'budgets',
+            component: Budgets,
           },
           {
             path: 'settings',
