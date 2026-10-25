@@ -135,12 +135,13 @@ export class Overview {
 
   readonly netSavings = computed(() => this.monthlyIncome() - this.monthlyExpenses());
 
+  // all-time income and expenses
+  readonly totalIncome = computed(() => this.getAmount(this.transactions(), 'income'));
+
+  readonly totalExpenses = computed(() => this.getAmount(this.transactions(), 'expense'));
+
   // all-time net transaction total
-  readonly netTransactionTotal = computed(
-    () =>
-      this.getAmount(this.transactions(), 'income') -
-      this.getAmount(this.transactions(), 'expense'),
-  );
+  readonly netTransactionTotal = computed(() => this.totalIncome() - this.totalExpenses());
 
   readonly summaryCards = computed<SummaryCard[]>(() => [
     {
@@ -150,15 +151,15 @@ export class Overview {
       type: 'balance',
     },
     {
-      title: 'Income',
-      amount: this.monthlyIncome(),
-      description: 'Received this month',
+      title: 'Total Income',
+      amount: this.totalIncome(),
+      description: 'Across all recorded transactions',
       type: 'income',
     },
     {
-      title: 'Expenses',
-      amount: this.monthlyExpenses(),
-      description: 'Spent this month',
+      title: 'Total Expenses',
+      amount: this.totalExpenses(),
+      description: 'Across all recorded transactions',
       type: 'expense',
     },
     {
@@ -194,6 +195,29 @@ export class Overview {
         expenses: this.getAmount(monthTransactions, 'expense'),
       };
     });
+  });
+
+  // only months with at least one income or expense transaction
+  readonly activeCashFlowMonths = computed(() =>
+    this.cashFlow().filter((month) => month.income > 0 || month.expenses > 0),
+  );
+
+  // average income across months with transaction activity
+  readonly averageMonthlyIncome = computed(() => {
+    const months = this.activeCashFlowMonths();
+
+    if (months.length === 0) return 0;
+
+    return months.reduce((total, month) => total + month.income, 0) / months.length;
+  });
+
+  // average expenses across months with transaction activity
+  readonly averageMonthlyExpenses = computed(() => {
+    const months = this.activeCashFlowMonths();
+
+    if (months.length === 0) return 0;
+
+    return months.reduce((total, month) => total + month.expenses, 0) / months.length;
   });
 
   readonly maxCashFlow = computed(() =>

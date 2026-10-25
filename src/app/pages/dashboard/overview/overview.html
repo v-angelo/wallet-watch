@@ -54,7 +54,9 @@
     <section>
       <div class="mb-4">
         <h2 class="text-base font-semibold text-(--text-primary)">Financial Summary</h2>
-        <p class="mt-1 text-sm text-(--text-secondary)">Your key numbers for the month.</p>
+        <p class="mt-1 text-sm text-(--text-secondary)">
+          Your overall income and expenses, alongside this month's net savings.
+        </p>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -180,17 +182,19 @@
 
         <div class="mt-6 grid grid-cols-2 gap-3">
           <div class="rounded-xl bg-(--bg-primary) p-4">
-            <p class="text-xs text-(--text-secondary)">Monthly income</p>
+            <p class="text-xs text-(--text-secondary)">Avg. monthly income</p>
             <p class="mt-2 text-lg font-semibold text-(--text-primary)">
-              {{ formatCurrency(monthlyIncome()) }}
+              {{ formatCurrency(averageMonthlyIncome()) }}
             </p>
+            <p class="mt-1 text-xs text-(--text-secondary)">Across the last 6 months</p>
           </div>
 
           <div class="rounded-xl bg-(--bg-primary) p-4">
-            <p class="text-xs text-(--text-secondary)">Monthly expenses</p>
+            <p class="text-xs text-(--text-secondary)">Avg. monthly expenses</p>
             <p class="mt-2 text-lg font-semibold text-(--text-primary)">
-              {{ formatCurrency(monthlyExpenses()) }}
+              {{ formatCurrency(averageMonthlyExpenses()) }}
             </p>
+            <p class="mt-1 text-xs text-(--text-secondary)">Across the last 6 months</p>
           </div>
         </div>
       </article>
