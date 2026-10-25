@@ -1,0 +1,801 @@
+<main class="mx-auto w-full max-w-[1600px] space-y-7 p-5 sm:p-6 lg:p-8">
+  <!-- page heading -->
+  <section class="flex animate-fade-up flex-col justify-between gap-5 sm:flex-row sm:items-center">
+    <div>
+      <p class="mb-1 text-sm font-medium text-(--accent)">SAVE WITH PURPOSE</p>
+
+      <h1 class="text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
+        Savings Goals
+      </h1>
+
+      <p class="mt-2 text-sm text-(--text-secondary)">
+        Turn your plans into progress, one contribution at a time.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      (click)="openCreateForm()"
+      class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
+    >
+      <svg lucidePlus [size]="18"></svg>
+      Create savings goal
+    </button>
+  </section>
+
+  <!-- notifications -->
+  @if (successMessage()) {
+    <div
+      class="flex animate-fade-up items-center justify-between gap-3 rounded-xl border border-(--success)/30 bg-(--bg-secondary) p-4"
+      role="status"
+    >
+      <p class="text-sm text-(--success)">{{ successMessage() }}</p>
+
+      <button
+        type="button"
+        (click)="successMessage.set('')"
+        aria-label="Dismiss success message"
+        class="text-(--text-secondary) hover:text-(--text-primary)"
+      >
+        <svg lucideX [size]="17"></svg>
+      </button>
+    </div>
+  }
+
+  @if (errorMessage() && !isFormOpen() && !isContributionFormOpen()) {
+    <div
+      class="flex items-start gap-3 rounded-xl border border-(--danger)/30 bg-(--bg-secondary) p-4"
+      role="alert"
+    >
+      <svg lucideCircleAlert [size]="19" class="mt-0.5 shrink-0 text-(--danger)"></svg>
+
+      <p class="min-w-0 flex-1 text-sm text-(--danger)">
+        {{ errorMessage() }}
+      </p>
+
+      <button
+        type="button"
+        (click)="errorMessage.set('')"
+        aria-label="Dismiss error message"
+        class="text-(--text-secondary) hover:text-(--text-primary)"
+      >
+        <svg lucideX [size]="17"></svg>
+      </button>
+    </div>
+  }
+
+  <!-- loading state -->
+  @if (isLoading()) {
+    <div
+      class="rounded-2xl border border-(--border) bg-(--bg-secondary) p-8 text-center"
+      role="status"
+    >
+      <svg lucideRefreshCw [size]="22" class="mx-auto animate-spin text-(--accent)"></svg>
+
+      <p class="mt-3 text-sm text-(--text-secondary)">Loading your savings goals...</p>
+    </div>
+  } @else if (errorMessage() && goals().length === 0) {
+    <section
+      class="animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-8 text-center"
+    >
+      <p class="text-sm text-(--text-secondary)">We couldn't retrieve your savings goals.</p>
+
+      <button
+        type="button"
+        (click)="loadGoals()"
+        class="mt-4 inline-flex items-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
+      >
+        <svg lucideRefreshCw [size]="16"></svg>
+        Try again
+      </button>
+    </section>
+  } @else {
+    <!-- summary cards -->
+    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <article
+        class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-sm font-medium text-(--text-secondary)">Total Saved</p>
+
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--success)/10 text-(--success)"
+          >
+            <svg lucideWallet [size]="20"></svg>
+          </div>
+        </div>
+
+        <p class="mt-5 text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
+          {{ formatCurrency(totalSaved()) }}
+        </p>
+
+        <p class="mt-2 text-xs text-(--text-secondary)">Across all your savings goals</p>
+      </article>
+
+      <article
+        class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+        style="animation-delay: 80ms"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-sm font-medium text-(--text-secondary)">Combined Targets</p>
+
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+          >
+            <svg lucideTarget [size]="20"></svg>
+          </div>
+        </div>
+
+        <p class="mt-5 text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
+          {{ formatCurrency(totalTarget()) }}
+        </p>
+
+        <p class="mt-2 text-xs text-(--text-secondary)">Your total target across all goals</p>
+      </article>
+
+      <article
+        class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg sm:col-span-2 xl:col-span-1"
+        style="animation-delay: 160ms"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-sm font-medium text-(--text-secondary)">Overall Progress</p>
+
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+          >
+            <svg lucideTrendingUp [size]="20"></svg>
+          </div>
+        </div>
+
+        <p class="mt-5 text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
+          {{ Math.round(overallProgress()) }}%
+        </p>
+
+        <div class="mt-3 h-2 overflow-hidden rounded-full bg-(--border)">
+          <div
+            class="h-full rounded-full bg-(--accent) transition-all duration-700"
+            [style.width.%]="overallProgress()"
+          ></div>
+        </div>
+
+        <p class="mt-2 text-xs text-(--text-secondary)">
+          {{ completedGoals().length }} of {{ goals().length }} goals completed
+        </p>
+      </article>
+    </section>
+
+    <!-- active goals -->
+    <section class="animate-fade-up">
+      <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 class="text-base font-semibold text-(--text-primary)">Your Goals</h2>
+
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            Keep contributing to get closer to what matters to you.
+          </p>
+        </div>
+
+        <span
+          class="rounded-lg bg-(--bg-secondary) px-3 py-1.5 text-xs font-medium text-(--text-secondary)"
+        >
+          {{ activeGoals().length }}
+          {{ activeGoals().length === 1 ? 'active goal' : 'active goals' }}
+        </span>
+      </div>
+
+      @if (activeGoals().length > 0) {
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+          @for (goal of activeGoals(); track trackGoal($index, goal); let i = $index) {
+            <article
+              class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+              [style.animation-delay.ms]="i * 70"
+            >
+              <!-- goal heading and actions -->
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex min-w-0 items-start gap-3">
+                  <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+                  >
+                    @switch (goal.icon) {
+                      @case ('house') {
+                        <svg lucideHouse [size]="21"></svg>
+                      }
+                      @case ('car-front') {
+                        <svg lucideCarFront [size]="21"></svg>
+                      }
+                      @case ('plane') {
+                        <svg lucidePlane [size]="21"></svg>
+                      }
+                      @case ('graduation-cap') {
+                        <svg lucideGraduationCap [size]="21"></svg>
+                      }
+                      @case ('laptop') {
+                        <svg lucideLaptop [size]="21"></svg>
+                      }
+                      @case ('heart') {
+                        <svg lucideHeart [size]="21"></svg>
+                      }
+                      @case ('shield-check') {
+                        <svg lucideShieldCheck [size]="21"></svg>
+                      }
+                      @case ('gem') {
+                        <svg lucideGem [size]="21"></svg>
+                      }
+                      @case ('wallet') {
+                        <svg lucideWallet [size]="21"></svg>
+                      }
+                      @default {
+                        <svg lucidePiggyBank [size]="21"></svg>
+                      }
+                    }
+                  </div>
+
+                  <div class="min-w-0">
+                    <h3 class="text-sm font-semibold wrap-break-word text-(--text-primary)">
+                      {{ goal.name }}
+                    </h3>
+
+                    <p class="mt-1 text-xs text-(--text-secondary)">
+                      {{ goal.description || 'A goal worth saving for' }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    (click)="openEditForm(goal)"
+                    [attr.aria-label]="'Edit ' + goal.name"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-primary) hover:text-(--accent)"
+                  >
+                    <svg lucidePencil [size]="15"></svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="deleteGoal(goal)"
+                    [disabled]="isDeleting() === goal._id"
+                    [attr.aria-label]="'Delete ' + goal.name"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--danger)/10 hover:text-(--danger) disabled:opacity-50"
+                  >
+                    @if (isDeleting() === goal._id) {
+                      <svg lucideRefreshCw [size]="15" class="animate-spin"></svg>
+                    } @else {
+                      <svg lucideTrash [size]="15"></svg>
+                    }
+                  </button>
+                </div>
+              </div>
+
+              <!-- saved amount and target -->
+              <div class="mt-6 flex items-end justify-between gap-3">
+                <div>
+                  <p class="text-2xl font-bold tracking-tight text-(--text-primary)">
+                    {{ formatCurrency(goal.savedAmount) }}
+                  </p>
+
+                  <p class="mt-1 text-xs text-(--text-secondary)">saved so far</p>
+                </div>
+
+                <div class="text-right">
+                  <p class="text-sm font-semibold text-(--text-primary)">
+                    {{ formatCurrency(goal.targetAmount) }}
+                  </p>
+
+                  <p class="mt-1 text-xs text-(--text-secondary)">target amount</p>
+                </div>
+              </div>
+
+              <!-- progress -->
+              <div class="mt-5 flex items-center justify-between gap-2 text-xs">
+                <span class="text-(--text-secondary)">Progress</span>
+
+                <span class="font-semibold text-(--accent)">
+                  {{ Math.round(progressPercentage(goal)) }}%
+                </span>
+              </div>
+
+              <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-(--border)">
+                <div
+                  class="h-full rounded-full bg-(--accent) transition-all duration-700"
+                  [style.width.%]="progressPercentage(goal)"
+                ></div>
+              </div>
+
+              <div class="mt-3 flex items-center justify-between gap-2">
+                <span class="text-xs text-(--text-secondary)"> Still needed </span>
+
+                <span class="text-xs font-semibold text-(--success)">
+                  {{ formatCurrency(remainingAmount(goal)) }}
+                </span>
+              </div>
+
+              <!-- deadline -->
+              @if (goal.deadline) {
+                <div class="mt-4 flex items-center gap-2 text-xs">
+                  <svg
+                    lucideCalendarDays
+                    [size]="15"
+                    class="shrink-0 text-(--text-secondary)"
+                  ></svg>
+
+                  <span class="text-(--text-secondary)">
+                    {{ formatDeadline(goal.deadline) }}
+                  </span>
+
+                  @if (daysRemaining(goal) !== null) {
+                    <span
+                      class="ml-auto text-right font-medium"
+                      [class.text-(--danger)]="daysRemaining(goal)! < 0"
+                      [class.text-(--accent)]="daysRemaining(goal)! >= 0"
+                    >
+                      @if (daysRemaining(goal)! < 0) {
+                        Overdue
+                      } @else if (daysRemaining(goal) === 0) {
+                        Due today
+                      } @else {
+                        {{ daysRemaining(goal) }} days left
+                      }
+                    </span>
+                  }
+                </div>
+              } @else {
+                <p class="mt-4 text-xs text-(--text-secondary)">No deadline set</p>
+              }
+
+              <!-- add savings -->
+              <button
+                type="button"
+                (click)="openContributionForm(goal)"
+                class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
+              >
+                <svg lucidePlus [size]="16"></svg>
+                Add savings
+              </button>
+            </article>
+          }
+        </div>
+      } @else {
+        <div
+          class="animate-fade-up rounded-2xl border border-dashed border-(--border) bg-(--bg-secondary) px-5 py-10 text-center"
+        >
+          <div
+            class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-(--accent)/10 text-(--accent)"
+          >
+            <svg lucidePiggyBank [size]="24"></svg>
+          </div>
+
+          <h3 class="mt-4 text-sm font-semibold text-(--text-primary)">No active savings goals</h3>
+
+          <p class="mx-auto mt-1 max-w-md text-sm text-(--text-secondary)">
+            Whether it's a new laptop, a trip, or an emergency fund, create a goal and start working
+            toward it.
+          </p>
+
+          <button
+            type="button"
+            (click)="openCreateForm()"
+            class="mt-5 inline-flex items-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-sm font-semibold text-black transition hover:opacity-90"
+          >
+            <svg lucidePlus [size]="16"></svg>
+            Create your first goal
+          </button>
+        </div>
+      }
+    </section>
+
+    <!-- completed goals -->
+    @if (completedGoals().length > 0) {
+      <section class="animate-fade-up">
+        <div class="mb-4">
+          <h2 class="text-base font-semibold text-(--text-primary)">Completed Goals</h2>
+
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            Look at what you've accomplished so far.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+          @for (goal of completedGoals(); track trackGoal($index, goal)) {
+            <article class="rounded-2xl border border-(--success)/30 bg-(--bg-secondary) p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex min-w-0 items-center gap-3">
+                  <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-(--success)/10 text-(--success)"
+                  >
+                    <svg lucideCircleCheck [size]="21"></svg>
+                  </div>
+
+                  <div class="min-w-0">
+                    <h3 class="text-sm font-semibold wrap-break-word text-(--text-primary)">
+                      {{ goal.name }}
+                    </h3>
+
+                    <p class="mt-1 text-xs font-medium text-(--success)">Goal completed!</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  (click)="deleteGoal(goal)"
+                  [disabled]="isDeleting() === goal._id"
+                  [attr.aria-label]="'Delete ' + goal.name"
+                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--danger)/10 hover:text-(--danger) disabled:opacity-50"
+                >
+                  <svg lucideTrash [size]="15"></svg>
+                </button>
+              </div>
+
+              <div class="mt-6">
+                <p class="text-2xl font-bold tracking-tight text-(--text-primary)">
+                  {{ formatCurrency(goal.savedAmount) }}
+                </p>
+
+                <p class="mt-1 text-xs text-(--text-secondary)">
+                  Target: {{ formatCurrency(goal.targetAmount) }}
+                </p>
+              </div>
+
+              <div class="mt-5 h-2.5 overflow-hidden rounded-full bg-(--border)">
+                <div class="h-full rounded-full bg-(--success)" [style.width.%]="100"></div>
+              </div>
+
+              <p class="mt-3 text-xs font-medium text-(--success)">
+                100% complete — congratulations!
+              </p>
+            </article>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  <!-- create / edit goal modal -->
+  @if (isFormOpen()) {
+    <div
+      class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      (click)="closeForm()"
+    >
+      <section
+        class="max-h-[90vh] w-full max-w-lg animate-fade-up overflow-y-auto rounded-t-2xl border border-(--border) bg-(--bg-secondary) p-5 shadow-2xl sm:rounded-2xl sm:p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="goal-form-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h2 id="goal-form-title" class="text-lg font-bold text-(--text-primary)">
+              {{ editingGoalId() ? 'Edit Savings Goal' : 'Create Savings Goal' }}
+            </h2>
+
+            <p class="mt-1 text-sm text-(--text-secondary)">
+              Give your savings plan a name and a target.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            (click)="closeForm()"
+            [disabled]="isSaving()"
+            aria-label="Close goal form"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-primary) hover:text-(--text-primary) disabled:opacity-50"
+          >
+            <svg lucideX [size]="19"></svg>
+          </button>
+        </div>
+
+        <form (ngSubmit)="saveGoal()" #goalForm="ngForm" class="space-y-5">
+          <div>
+            <label for="goalName" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Goal name
+            </label>
+
+            <input
+              id="goalName"
+              name="goalName"
+              type="text"
+              [(ngModel)]="goalName"
+              required
+              minlength="2"
+              maxlength="60"
+              placeholder="e.g. New laptop"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+            />
+          </div>
+
+          <div>
+            <label
+              for="goalDescription"
+              class="mb-2 block text-sm font-medium text-(--text-primary)"
+            >
+              Description
+              <span class="font-normal text-(--text-secondary)">(optional)</span>
+            </label>
+
+            <textarea
+              id="goalDescription"
+              name="goalDescription"
+              [(ngModel)]="goalDescription"
+              maxlength="250"
+              rows="3"
+              placeholder="What are you saving for?"
+              class="w-full resize-y rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+            ></textarea>
+          </div>
+
+          <!-- goal icon -->
+          <div>
+            <label class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Choose an icon
+            </label>
+
+            <div class="grid grid-cols-5 gap-2">
+              @for (goalIcon of goalIcons; track goalIcon.name) {
+                <button
+                  type="button"
+                  (click)="selectedIcon = goalIcon.name"
+                  [attr.aria-label]="goalIcon.label"
+                  [attr.aria-pressed]="selectedIcon === goalIcon.name"
+                  [title]="goalIcon.label"
+                  class="flex flex-col items-center justify-center gap-2 rounded-xl border p-3 transition-colors"
+                  [class.border-(--accent)]="selectedIcon === goalIcon.name"
+                  [class.bg-(--accent)/10]="selectedIcon === goalIcon.name"
+                  [class.text-(--accent)]="selectedIcon === goalIcon.name"
+                  [class.border-(--border)]="selectedIcon !== goalIcon.name"
+                  [class.text-(--text-secondary)]="selectedIcon !== goalIcon.name"
+                  [class.hover:border-(--accent)/50]="selectedIcon !== goalIcon.name"
+                >
+                  @switch (goalIcon.name) {
+                    @case ('piggy-bank') {
+                      <svg lucidePiggyBank [size]="21"></svg>
+                    }
+                    @case ('house') {
+                      <svg lucideHouse [size]="21"></svg>
+                    }
+                    @case ('car-front') {
+                      <svg lucideCarFront [size]="21"></svg>
+                    }
+                    @case ('plane') {
+                      <svg lucidePlane [size]="21"></svg>
+                    }
+                    @case ('graduation-cap') {
+                      <svg lucideGraduationCap [size]="21"></svg>
+                    }
+                    @case ('laptop') {
+                      <svg lucideLaptop [size]="21"></svg>
+                    }
+                    @case ('heart') {
+                      <svg lucideHeart [size]="21"></svg>
+                    }
+                    @case ('shield-check') {
+                      <svg lucideShieldCheck [size]="21"></svg>
+                    }
+                    @case ('gem') {
+                      <svg lucideGem [size]="21"></svg>
+                    }
+                    @case ('wallet') {
+                      <svg lucideWallet [size]="21"></svg>
+                    }
+                  }
+
+                  <span class="text-[10px] font-medium">{{ goalIcon.label }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label for="targetAmount" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Target amount
+            </label>
+
+            <input
+              id="targetAmount"
+              name="targetAmount"
+              type="number"
+              [(ngModel)]="targetAmount"
+              required
+              min="0.01"
+              step="0.01"
+              placeholder="Enter your target amount"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+            />
+
+            <p class="mt-2 text-xs text-(--text-secondary)">
+              Amounts use your account's preferred currency.
+            </p>
+          </div>
+
+          @if (!editingGoalId()) {
+            <div>
+              <label
+                for="initialSavedAmount"
+                class="mb-2 block text-sm font-medium text-(--text-primary)"
+              >
+                Already saved
+                <span class="font-normal text-(--text-secondary)">(optional)</span>
+              </label>
+
+              <input
+                id="initialSavedAmount"
+                name="initialSavedAmount"
+                type="number"
+                [(ngModel)]="initialSavedAmount"
+                min="0"
+                step="0.01"
+                placeholder="0"
+                class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+              />
+            </div>
+          }
+
+          <div>
+            <label for="goalDeadline" class="mb-2 block text-sm font-medium text-(--text-primary)">
+              Target date
+              <span class="font-normal text-(--text-secondary)">(optional)</span>
+            </label>
+
+            <input
+              id="goalDeadline"
+              name="goalDeadline"
+              type="date"
+              [(ngModel)]="goalDeadline"
+              [min]="''"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none focus:border-(--accent)"
+            />
+          </div>
+
+          @if (errorMessage()) {
+            <p class="text-sm text-(--danger)" role="alert">
+              {{ errorMessage() }}
+            </p>
+          }
+
+          <div class="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              (click)="closeForm()"
+              [disabled]="isSaving()"
+              class="rounded-xl border border-(--border) px-4 py-3 text-sm font-semibold text-(--text-primary) transition-colors hover:bg-(--bg-primary) disabled:opacity-50 sm:py-2.5"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              [disabled]="isSaving() || goalForm.invalid"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-(--accent) px-5 py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:py-2.5"
+            >
+              @if (isSaving()) {
+                <svg lucideRefreshCw [size]="16" class="animate-spin"></svg>
+                Saving...
+              } @else {
+                <svg lucidePlus [size]="16"></svg>
+                {{ editingGoalId() ? 'Save changes' : 'Create goal' }}
+              }
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+
+  <!-- add savings modal -->
+  @if (isContributionFormOpen()) {
+    <div
+      class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      (click)="closeContributionForm()"
+    >
+      <section
+        class="w-full max-w-md animate-fade-up rounded-t-2xl border border-(--border) bg-(--bg-secondary) p-5 shadow-2xl sm:rounded-2xl sm:p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contribution-form-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h2 id="contribution-form-title" class="text-lg font-bold text-(--text-primary)">
+              Add Savings
+            </h2>
+
+            @if (contributingGoal(); as goal) {
+              <p class="mt-1 text-sm text-(--text-secondary)">
+                Add money toward <strong>{{ goal.name }}</strong
+                >.
+              </p>
+            }
+          </div>
+
+          <button
+            type="button"
+            (click)="closeContributionForm()"
+            [disabled]="isAddingSavings()"
+            aria-label="Close contribution form"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-primary) hover:text-(--text-primary) disabled:opacity-50"
+          >
+            <svg lucideX [size]="19"></svg>
+          </button>
+        </div>
+
+        @if (contributingGoal(); as goal) {
+          <div class="mb-5 rounded-xl bg-(--bg-primary) p-4">
+            <div class="flex items-center justify-between gap-3 text-sm">
+              <span class="text-(--text-secondary)">Saved so far</span>
+              <span class="font-semibold text-(--text-primary)">
+                {{ formatCurrency(goal.savedAmount) }}
+              </span>
+            </div>
+
+            <div class="mt-3 flex items-center justify-between gap-3 text-sm">
+              <span class="text-(--text-secondary)">Still needed</span>
+              <span class="font-semibold text-(--success)">
+                {{ formatCurrency(remainingAmount(goal)) }}
+              </span>
+            </div>
+          </div>
+
+          <form (ngSubmit)="addSavings()" #contributionForm="ngForm" class="space-y-5">
+            <div>
+              <label
+                for="contributionAmount"
+                class="mb-2 block text-sm font-medium text-(--text-primary)"
+              >
+                Contribution amount
+              </label>
+
+              <input
+                id="contributionAmount"
+                name="contributionAmount"
+                type="number"
+                [(ngModel)]="contributionAmount"
+                required
+                min="0.01"
+                [max]="remainingAmount(goal)"
+                step="0.01"
+                placeholder="Enter amount to add"
+                class="w-full rounded-xl border border-(--border) bg-(--bg-primary) px-4 py-3 text-sm text-(--text-primary) transition-colors outline-none placeholder:text-(--text-secondary) focus:border-(--accent)"
+              />
+
+              <p class="mt-2 text-xs text-(--text-secondary)">
+                You can add up to {{ formatCurrency(remainingAmount(goal)) }}.
+              </p>
+            </div>
+
+            @if (errorMessage()) {
+              <p class="text-sm text-(--danger)" role="alert">
+                {{ errorMessage() }}
+              </p>
+            }
+
+            <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                (click)="closeContributionForm()"
+                [disabled]="isAddingSavings()"
+                class="rounded-xl border border-(--border) px-4 py-3 text-sm font-semibold text-(--text-primary) transition-colors hover:bg-(--bg-primary) disabled:opacity-50 sm:py-2.5"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                [disabled]="isAddingSavings() || contributionForm.invalid"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-(--accent) px-5 py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:py-2.5"
+              >
+                @if (isAddingSavings()) {
+                  <svg lucideRefreshCw [size]="16" class="animate-spin"></svg>
+                  Adding...
+                } @else {
+                  <svg lucidePlus [size]="16"></svg>
+                  Add savings
+                }
+              </button>
+            </div>
+          </form>
+        }
+      </section>
+    </div>
+  }
+</main>

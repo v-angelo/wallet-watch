@@ -74,23 +74,13 @@
     </a>
 
     <a
-      routerLink="/dashboard/savings"
+      routerLink="/dashboard/savings-goals"
       routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
       class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
       (click)="closeMenu.emit()"
     >
       <svg lucideTarget [size]="20"></svg>
       <span>Savings Goals</span>
-    </a>
-
-    <a
-      routerLink="/dashboard/reports"
-      routerLinkActive="bg-(--accent)/15 text-(--accent) font-semibold"
-      class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
-      (click)="closeMenu.emit()"
-    >
-      <svg lucideChartPie [size]="20"></svg>
-      <span>Reports</span>
     </a>
 
     <div class="my-6 border-t border-(--border)"></div>

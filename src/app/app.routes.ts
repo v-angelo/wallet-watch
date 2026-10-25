@@ -12,6 +12,7 @@ import { Settings } from './pages/dashboard/settings/settings';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { Budgets } from './pages/dashboard/budgets/budgets';
+import { SavingsGoals } from './pages/dashboard/savings-goals/savings-goals';
 
 export const routes: Routes = [
   {
@@ -47,6 +48,10 @@ export const routes: Routes = [
           {
             path: 'budgets',
             component: Budgets,
+          },
+          {
+            path: 'savings-goals',
+            component: SavingsGoals,
           },
           {
             path: 'settings',
