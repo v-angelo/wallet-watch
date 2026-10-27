@@ -1,0 +1,33 @@
+<div class="flex min-h-screen items-center justify-center bg-(--bg) px-6 py-12 text-(--text)">
+  <div class="w-full max-w-lg text-center">
+    <div
+      class="mx-auto mb-6 flex size-20 items-center justify-center rounded-2xl border border-(--border) bg-(--bg-secondary)"
+    >
+      <svg lucideWallet [size]="36" class="text-(--accent)"></svg>
+    </div>
+
+    <p class="mb-2 text-7xl font-bold tracking-tight text-(--accent)">404</p>
+
+    <h1 class="mb-3 text-2xl font-semibold sm:text-3xl">Page not found</h1>
+
+    <p class="mx-auto mb-8 max-w-sm text-(--text-secondary)">
+      Looks like this page doesn't exist or may have been moved. Let's get you back on track.
+    </p>
+
+    <div class="flex flex-wrap justify-center gap-3">
+      <a
+        routerLink="/"
+        class="rounded-xl bg-(--accent) px-5 py-3 font-medium text-black transition hover:opacity-90"
+      >
+        Back to home
+      </a>
+
+      <a
+        routerLink="/dashboard"
+        class="rounded-xl border border-(--border) px-5 py-3 font-medium transition hover:bg-(--bg-secondary)"
+      >
+        Go to dashboard
+      </a>
+    </div>
+  </div>
+</div>

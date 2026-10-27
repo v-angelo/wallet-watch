@@ -47,6 +47,17 @@
           </div>
         </div>
 
+        @if (user.role === 'admin') {
+          <a
+            routerLink="/admin"
+            (click)="closeProfileMenu()"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+          >
+            <svg lucideShieldCheck [size]="18"></svg>
+            Admin Panel
+          </a>
+        }
+
         <a
           routerLink="/dashboard/settings"
           (click)="closeProfileMenu()"

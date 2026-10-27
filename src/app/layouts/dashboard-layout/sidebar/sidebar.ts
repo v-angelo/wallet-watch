@@ -9,6 +9,7 @@ import {
   LucideSettings,
   LucideLogOut,
   LucideX,
+  LucideShieldCheck,
 } from '@lucide/angular';
 import { UserAvatar } from '../../../shared/user-avatar/user-avatar';
 import { AuthService } from '../../../core/services/auth.service';
@@ -27,6 +28,7 @@ import { AuthService } from '../../../core/services/auth.service';
     LucideSettings,
     LucideLogOut,
     LucideX,
+    LucideShieldCheck,
     UserAvatar,
   ],
   templateUrl: './sidebar.html',

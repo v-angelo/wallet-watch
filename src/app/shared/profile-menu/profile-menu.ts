@@ -1,7 +1,12 @@
 import { Component, ElementRef, EventEmitter, HostListener, Output, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { LucideChevronDown, LucideLogOut, LucideSettings } from '@lucide/angular';
+import {
+  LucideChevronDown,
+  LucideLogOut,
+  LucideSettings,
+  LucideShieldCheck,
+} from '@lucide/angular';
 
 import { AuthService } from '../../core/services/auth.service';
 import { UserAvatar } from '../user-avatar/user-avatar';
@@ -9,7 +14,14 @@ import { UserAvatar } from '../user-avatar/user-avatar';
 @Component({
   selector: 'app-profile-menu',
   standalone: true,
-  imports: [RouterLink, UserAvatar, LucideChevronDown, LucideSettings, LucideLogOut],
+  imports: [
+    RouterLink,
+    UserAvatar,
+    LucideChevronDown,
+    LucideSettings,
+    LucideLogOut,
+    LucideShieldCheck,
+  ],
   templateUrl: './profile-menu.html',
 })
 export class ProfileMenu {

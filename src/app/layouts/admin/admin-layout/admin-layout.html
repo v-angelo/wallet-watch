@@ -1,0 +1,179 @@
+<div class="flex h-screen overflow-hidden bg-(--bg) text-(--text-primary)">
+  <!-- mobile sidebar backdrop -->
+  @if (mobileMenuOpen) {
+    <button
+      type="button"
+      aria-label="Close navigation menu"
+      class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+      (click)="closeMobileMenu()"
+    ></button>
+  }
+
+  <!-- sidebar -->
+  <aside
+    class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-(--border) bg-(--bg-secondary) transition-transform duration-300 lg:static lg:translate-x-0"
+    [class.-translate-x-full]="!mobileMenuOpen"
+    [class.translate-x-0]="mobileMenuOpen"
+  >
+    <!-- brand -->
+    <div class="flex h-20 shrink-0 items-center justify-between px-6">
+      <a routerLink="/" class="flex items-center gap-3" (click)="closeMobileMenu()">
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent) text-(--bg-primary)"
+        >
+          <svg lucideWallet [size]="27"></svg>
+        </span>
+
+        <span class="text-xl font-bold tracking-tight text-(--text-primary)">
+          Wallet<span class="text-(--accent)">Watch</span>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        class="rounded-lg p-2 text-(--text-secondary) hover:bg-(--border) lg:hidden"
+        aria-label="Close sidebar"
+        (click)="closeMobileMenu()"
+      >
+        <svg lucideX [size]="20"></svg>
+      </button>
+    </div>
+
+    <!-- navigation -->
+    <nav class="flex-1 space-y-2 overflow-y-auto p-4">
+      <p class="mb-3 px-3 text-xs font-semibold tracking-wider text-(--text-secondary) uppercase">
+        Administration
+      </p>
+
+      <a
+        routerLink="/admin"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="bg-(--accent)/10 text-(--accent) font-semibold"
+        (click)="closeMobileMenu()"
+        class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      >
+        <svg lucideLayoutDashboard [size]="19"></svg>
+        Overview
+      </a>
+
+      <a
+        routerLink="/admin/users"
+        routerLinkActive="bg-(--accent)/10 text-(--accent) font-semibold"
+        (click)="closeMobileMenu()"
+        class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      >
+        <svg lucideUsers [size]="19"></svg>
+        Manage Users
+      </a>
+    </nav>
+
+    <!-- return to the regular dashboard -->
+    <div class="border-t border-(--border) px-3 py-2">
+      <a
+        routerLink="/dashboard"
+        (click)="closeMobileMenu()"
+        class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--text-primary)"
+      >
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent)"
+        >
+          <svg lucideChartNoAxesCombined [size]="19"></svg>
+        </span>
+        Finance Dashboard
+      </a>
+    </div>
+
+    <!-- bottom section -->
+    <div class="shrink-0 border-t border-(--border) p-4">
+      <!-- admin profile -->
+      @if (authService.user(); as user) {
+        <div class="mb-4 flex items-center gap-3 rounded-xl p-2">
+          <app-user-avatar />
+
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-semibold text-(--text-primary)">
+              {{ user.username }}
+            </p>
+            <p class="truncate text-xs text-(--text-secondary)">
+              {{ user.email }}
+            </p>
+          </div>
+        </div>
+      }
+
+      <!-- logout -->
+      <button
+        type="button"
+        class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-(--text-secondary) transition-colors hover:bg-(--border) hover:text-(--danger)"
+        (click)="logout()"
+      >
+        <svg lucideLogOut [size]="20"></svg>
+        <span>Log out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- main section -->
+  <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+    <!-- topbar -->
+    <header
+      class="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-(--border) bg-(--bg-secondary)/95 px-4 backdrop-blur-md sm:px-6 lg:px-8"
+    >
+      <div class="flex min-w-0 items-center gap-3">
+        <button
+          type="button"
+          aria-label="Open navigation menu"
+          class="rounded-xl p-2 text-(--text-secondary) transition-colors hover:bg-(--border) lg:hidden"
+          (click)="toggleMobileMenu()"
+        >
+          @if (mobileMenuOpen) {
+            <svg lucideX [size]="21"></svg>
+          } @else {
+            <svg lucideMenu [size]="21"></svg>
+          }
+        </button>
+
+        <span
+          class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent) sm:flex"
+        >
+          <svg lucideShieldCheck [size]="21"></svg>
+        </span>
+
+        <div class="min-w-0">
+          <h1 class="truncate text-base font-bold sm:text-lg">Admin Panel</h1>
+          <p class="hidden text-xs text-(--text-secondary) sm:block">
+            Manage your WalletWatch platform
+          </p>
+        </div>
+      </div>
+
+      <div class="flex shrink-0 items-center gap-2 sm:gap-4">
+        <!-- theme toggle -->
+        <button
+          type="button"
+          aria-label="Toggle theme"
+          class="flex h-9 w-9 items-center justify-center rounded-lg border border-(--border) bg-(--bg-primary) text-(--text-secondary) transition-all duration-200 hover:border-(--accent) hover:text-(--accent)"
+          (click)="toggleTheme()"
+        >
+          @if (themeService.theme() === 'dark') {
+            <svg lucideSun [size]="19"></svg>
+          } @else {
+            <svg lucideMoon [size]="19"></svg>
+          }
+        </button>
+
+        <div class="h-8 w-px bg-(--border)"></div>
+
+        <!-- shared profile dropdown -->
+        <app-profile-menu (logoutRequested)="logout()" />
+      </div>
+    </header>
+
+    <!-- routed admin page -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
+        <router-outlet />
+      </div>
+    </main>
+  </div>
+</div>
