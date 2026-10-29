@@ -1,0 +1,78 @@
+<section
+  class="mx-auto flex flex-col items-center justify-center bg-(--bg-primary) px-4 py-12 max-2k:min-h-[calc(100vh-4rem)] sm:px-6 lg:px-8"
+>
+  <div
+    class="relative mx-auto flex max-w-7xl flex-col items-center justify-center overflow-hidden rounded-3xl border border-(--border) bg-(--bg-secondary) px-6 py-16 text-center shadow-sm sm:px-12 sm:py-20"
+  >
+    <!-- decorative background elements -->
+    <div
+      class="pointer-events-none absolute -top-24 -right-20 h-64 w-64 rounded-full bg-(--accent)/10 blur-3xl"
+    ></div>
+
+    <div
+      class="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-(--accent)/5 blur-3xl"
+    ></div>
+
+    <div class="relative z-10 mx-auto max-w-3xl">
+      <!-- icon -->
+      <div
+        appScrollAnimate
+        class="mx-auto mb-6 flex h-14 w-14 animate-fade-up items-center justify-center rounded-2xl border border-(--accent)/30 bg-(--accent)/10 text-(--accent)"
+      >
+        <svg lucideSparkles [size]="26"></svg>
+      </div>
+
+      <!-- heading -->
+      <h2
+        appScrollAnimate
+        class="animate-delay-150 animate-fade-up text-3xl font-bold tracking-tight text-(--text-primary) sm:text-4xl lg:text-5xl"
+      >
+        Take control of your
+        <span class="text-(--accent)">financial future.</span>
+      </h2>
+
+      <!-- description -->
+      <p
+        appScrollAnimate
+        class="animate-delay-150 mx-auto mt-6 max-w-2xl animate-fade-up text-base leading-7 text-(--text-secondary) sm:text-lg"
+      >
+        Start tracking your expenses, planning your budgets, and working toward your savings goals —
+        all in one place with WalletWatch.
+      </p>
+
+      <!-- actions -->
+      <div
+        appScrollAnimate
+        class="animate-delay-225 mt-9 flex animate-fade-up flex-col items-center justify-center gap-4 sm:flex-row"
+      >
+        <a
+          routerLink="/register"
+          class="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-(--accent) px-7 py-3.5 font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-(--accent-hover) sm:w-auto"
+        >
+          Get Started
+          <svg
+            lucideArrowRight
+            [size]="18"
+            class="transition-transform duration-200 group-hover:translate-x-1"
+          ></svg>
+        </a>
+
+        <a
+          routerLink="/login"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-(--border) px-7 py-3.5 font-semibold text-(--text-primary) transition duration-200 hover:-translate-y-0.5 hover:bg-(--bg-primary) sm:w-auto"
+        >
+          Sign In
+        </a>
+      </div>
+
+      <!-- trust note -->
+      <div
+        appScrollAnimate
+        class="animate-delay-300 mt-8 flex animate-fade-up items-center justify-center gap-2 text-sm text-(--text-secondary)"
+      >
+        <svg lucideShieldCheck [size]="17" class="shrink-0 text-(--accent)"></svg>
+        <span>Your finances, organized in one place.</span>
+      </div>
+    </div>
+  </div>
+</section>

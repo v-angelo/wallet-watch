@@ -63,6 +63,9 @@
   --animate-toast-out: toast-out 0.2s ease-in both;
 
   --animate-settings-enter: settings-enter 220ms ease-out both;
+
+  /* custom breakpoints */
+  --breakpoint-2k: 2560px;
 }
 
 @layer utilities {

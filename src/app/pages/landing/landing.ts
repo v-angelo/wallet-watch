@@ -4,9 +4,10 @@ import { Features } from './components/features/features';
 import { Footer } from './components/footer/footer';
 import { About } from './components/about/about';
 import { Navbar } from '../../shared/navbar/navbar';
+import { Cta } from './components/cta/cta';
 
 @Component({
-  imports: [Navbar, Hero, Features, Footer, About],
+  imports: [Navbar, Hero, Features, Footer, About, Cta],
   selector: 'app-landing',
   styleUrl: './landing.css',
   templateUrl: './landing.html',

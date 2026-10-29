@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LucideArrowDownLeft,
+  LucideArrowRight,
   LucideArrowUpRight,
   LucideCoffee,
   LucideShoppingCart,
@@ -12,6 +13,7 @@ import {
   imports: [
     RouterLink,
     LucideWallet,
+    LucideArrowRight,
     LucideArrowDownLeft,
     LucideArrowUpRight,
     LucideCoffee,
