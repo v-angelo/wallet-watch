@@ -23,7 +23,7 @@ import {
   LucideTrash2,
 } from '@lucide/angular';
 
-import { TransactionData, TransactionService } from '../../../core/services/tansaction.service';
+import { TransactionData, TransactionService } from '../../../core/services/transaction.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { TransactionFormModal } from './transaction-form-modal/transaction-form-modal';

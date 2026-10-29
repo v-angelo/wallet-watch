@@ -14,7 +14,7 @@ import {
   LucideHouse,
   LucideArrowRight,
 } from '@lucide/angular';
-import { TransactionData, TransactionService } from '../../../core/services/tansaction.service';
+import { TransactionData, TransactionService } from '../../../core/services/transaction.service';
 import { CurrencyService } from '../../../core/services/currency.service';
 
 interface SummaryCard {
@@ -89,6 +89,16 @@ export class Overview {
   readonly transactions = signal<TransactionData[]>([]);
   readonly isLoading = signal(true);
   readonly errorMessage = signal('');
+
+  readonly greeting = computed(() => {
+    const hour = new Date().getHours();
+
+    if (hour >= 5 && hour < 12) return 'Good morning!';
+    if (hour >= 12 && hour < 17) return 'Good afternoon!';
+    if (hour >= 17 && hour < 21) return 'Good evening!';
+
+    return 'Hello!';
+  });
 
   // date helpers
   private readonly currentMonthKey = this.getMonthKey(this.currentDate);
@@ -224,11 +234,11 @@ export class Overview {
     Math.max(1, ...this.cashFlow().flatMap((item) => [item.income, item.expenses])),
   );
 
-  // current-month expense breakdown by category
+  // all-time expense breakdown by category
   readonly spendingCategories = computed<SpendingCategory[]>(() => {
     const totals = new Map<string, number>();
 
-    for (const transaction of this.currentMonthTransactions()) {
+    for (const transaction of this.transactions()) {
       if (transaction.type !== 'expense') continue;
 
       const category = transaction.category || 'Other';

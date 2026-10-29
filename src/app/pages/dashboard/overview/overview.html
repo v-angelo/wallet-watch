@@ -5,11 +5,11 @@
       <p class="mb-1 text-sm font-medium text-(--accent)">YOUR FINANCES AT A GLANCE</p>
 
       <h1 class="text-2xl font-bold tracking-tight text-(--text-primary) sm:text-3xl">
-        Good evening!
+        {{ greeting() }}
       </h1>
 
       <p class="mt-2 text-sm text-(--text-secondary)">
-        Here's how your money is looking this month.
+        Here's your complete financial overview, from income and expenses to your spending habits.
       </p>
     </div>
 
@@ -207,7 +207,7 @@
         <div>
           <h2 class="text-base font-semibold text-(--text-primary)">Spending by Category</h2>
           <p class="mt-1 text-sm text-(--text-secondary)">
-            Your expense breakdown for {{ monthLabel }}.
+            Your expense breakdown across all recorded transactions.
           </p>
         </div>
 
@@ -215,7 +215,7 @@
           <p class="text-3xl font-bold text-(--text-primary)">
             {{ formatCurrency(totalCategorySpending()) }}
           </p>
-          <p class="mt-1 text-sm text-(--text-secondary)">Total expenses this month</p>
+          <p class="mt-1 text-sm text-(--text-secondary)">Total expenses across all time</p>
 
           <div class="mt-4 h-2 overflow-hidden rounded-full bg-(--border)">
             <div
