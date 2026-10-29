@@ -1,1 +1,395 @@
-<p>admin-overview works!</p>
+<div class="space-y-8">
+  <!-- page heading -->
+  <section class="flex animate-fade-up flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div>
+      <div class="mb-2 flex items-center gap-2 text-sm text-(--text-secondary)">
+        <svg lucideShieldCheck [size]="17" class="text-(--accent)"></svg>
+        Platform Administration
+      </div>
+
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Admin Overview</h2>
+
+      <p class="mt-2 text-sm text-(--text-secondary)">
+        Monitor your platform and manage registered users.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      (click)="loadStats()"
+      [disabled]="isLoading()"
+      class="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-2.5 text-sm font-medium text-(--text-primary) transition-all hover:border-(--accent) hover:text-(--accent) disabled:cursor-not-allowed disabled:opacity-60 sm:self-auto"
+    >
+      <svg lucideRefreshCw [size]="16" [class.animate-spin]="isLoading()"></svg>
+      {{ isLoading() ? 'Refreshing...' : 'Refresh Stats' }}
+    </button>
+  </section>
+
+  <!-- error state -->
+  @if (errorMessage()) {
+    <section class="rounded-2xl border border-(--danger)/30 bg-(--danger)/5 p-5">
+      <div class="flex items-start gap-3">
+        <svg lucideCircleAlert [size]="21" class="mt-0.5 shrink-0 text-(--danger)"></svg>
+
+        <div class="flex-1">
+          <h3 class="font-semibold text-(--text-primary)">Couldn't load statistics</h3>
+
+          <p class="mt-1 text-sm text-(--text-secondary)">
+            {{ errorMessage() }}
+          </p>
+
+          <button
+            type="button"
+            (click)="loadStats()"
+            class="mt-3 text-sm font-semibold text-(--danger) hover:underline"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- statistics cards -->
+  <section
+    class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+    aria-label="Platform statistics"
+  >
+    <!-- total users -->
+    <article
+      class="group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-(--text-secondary)">Total Users</p>
+
+          @if (isLoading()) {
+            <div class="mt-3 h-9 w-24 animate-pulse rounded-lg bg-(--border)"></div>
+          } @else {
+            <h3 class="mt-2 text-3xl font-bold tabular-nums">
+              {{ stats()?.totalUsers ?? '—' }}
+            </h3>
+          }
+        </div>
+
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent) transition-transform duration-300 group-hover:scale-110"
+        >
+          <svg lucideUsers [size]="23"></svg>
+        </span>
+      </div>
+
+      <div class="mt-4 flex items-center gap-2 text-xs text-(--text-secondary)">
+        <span class="font-medium text-(--accent)">Platform-wide</span>
+        registered accounts
+      </div>
+    </article>
+
+    <!-- active users -->
+    <article
+      class="animate-delay-150 group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--success)/50 hover:shadow-lg"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-(--text-secondary)">Active Users</p>
+
+          @if (isLoading()) {
+            <div class="mt-3 h-9 w-24 animate-pulse rounded-lg bg-(--border)"></div>
+          } @else {
+            <h3 class="mt-2 text-3xl font-bold tabular-nums">
+              {{ stats()?.activeUsers ?? '—' }}
+            </h3>
+          }
+        </div>
+
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-xl bg-(--success)/10 text-(--success) transition-transform duration-300 group-hover:scale-110"
+        >
+          <svg lucideUserCheck [size]="23"></svg>
+        </span>
+      </div>
+
+      <div class="mt-4 flex items-center gap-2 text-xs text-(--text-secondary)">
+        <span class="font-medium text-(--success)">
+          {{ isLoading() ? '—' : activeUserPercentage() + '%' }}
+        </span>
+        of registered users
+      </div>
+    </article>
+
+    <!-- inactive users -->
+    <article
+      class="animate-delay-300 group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--danger)/50 hover:shadow-lg"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-(--text-secondary)">Inactive Users</p>
+
+          @if (isLoading()) {
+            <div class="mt-3 h-9 w-24 animate-pulse rounded-lg bg-(--border)"></div>
+          } @else {
+            <h3 class="mt-2 text-3xl font-bold tabular-nums">
+              {{ stats()?.inactiveUsers ?? '—' }}
+            </h3>
+          }
+        </div>
+
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-xl bg-(--danger)/10 text-(--danger) transition-transform duration-300 group-hover:scale-110"
+        >
+          <svg lucideUserX [size]="23"></svg>
+        </span>
+      </div>
+
+      <div class="mt-4 flex items-center gap-2 text-xs text-(--text-secondary)">
+        <span class="font-medium text-(--danger)">
+          {{ isLoading() ? '—' : inactiveUserPercentage() + '%' }}
+        </span>
+        of registered users
+      </div>
+    </article>
+
+    <!-- total transactions -->
+    <article
+      class="animate-delay-300 group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-(--text-secondary)">Total Transactions</p>
+
+          @if (isLoading()) {
+            <div class="mt-3 h-9 w-24 animate-pulse rounded-lg bg-(--border)"></div>
+          } @else {
+            <h3 class="mt-2 text-3xl font-bold tabular-nums">
+              {{ stats()?.totalTransactions ?? '—' }}
+            </h3>
+          }
+        </div>
+
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent) transition-transform duration-300 group-hover:scale-110"
+        >
+          <svg lucideArrowLeftRight [size]="23"></svg>
+        </span>
+      </div>
+
+      <div class="mt-4 text-xs text-(--text-secondary)">Across all registered accounts</div>
+    </article>
+
+    <!-- total budgets -->
+    <article
+      class="animate-delay-450 group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-(--text-secondary)">Total Budgets</p>
+
+          @if (isLoading()) {
+            <div class="mt-3 h-9 w-24 animate-pulse rounded-lg bg-(--border)"></div>
+          } @else {
+            <h3 class="mt-2 text-3xl font-bold tabular-nums">
+              {{ stats()?.totalBudgets ?? '—' }}
+            </h3>
+          }
+        </div>
+
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent) transition-transform duration-300 group-hover:scale-110"
+        >
+          <svg lucideWallet [size]="23"></svg>
+        </span>
+      </div>
+
+      <div class="mt-4 text-xs text-(--text-secondary)">Budgets created on the platform</div>
+    </article>
+
+    <!-- total savings goals -->
+    <article
+      class="animate-delay-600 group animate-fade-up rounded-2xl border border-(--border) bg-(--bg-secondary) p-5 transition-all duration-300 hover:-translate-y-1 hover:border-(--accent)/50 hover:shadow-lg"
+    >
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium text-(--text-secondary)">Savings Goals</p>
+
+          @if (isLoading()) {
+            <div class="mt-3 h-9 w-24 animate-pulse rounded-lg bg-(--border)"></div>
+          } @else {
+            <h3 class="mt-2 text-3xl font-bold tabular-nums">
+              {{ stats()?.totalSavingsGoals ?? '—' }}
+            </h3>
+          }
+        </div>
+
+        <span
+          class="flex h-12 w-12 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent) transition-transform duration-300 group-hover:scale-110"
+        >
+          <svg lucidePiggyBank [size]="23"></svg>
+        </span>
+      </div>
+
+      <div class="mt-4 text-xs text-(--text-secondary)">Savings goals created on the platform</div>
+    </article>
+  </section>
+
+  <!-- user activity and quick actions -->
+  <section class="grid grid-cols-1 gap-6 xl:grid-cols-5">
+    <!-- user activity summary -->
+    <article
+      class="animate-fade-right rounded-2xl border border-(--border) bg-(--bg-secondary) p-6 xl:col-span-3"
+    >
+      <div class="flex items-center gap-3">
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent)"
+        >
+          <svg lucideActivity [size]="21"></svg>
+        </span>
+
+        <div>
+          <h3 class="font-bold">User Activity Summary</h3>
+          <p class="mt-1 text-xs text-(--text-secondary)">Current account status breakdown</p>
+        </div>
+      </div>
+
+      @if (isLoading()) {
+        <div class="mt-8 space-y-5">
+          <div class="h-3 w-full animate-pulse rounded-full bg-(--border)"></div>
+          <div class="h-4 w-2/3 animate-pulse rounded-lg bg-(--border)"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-lg bg-(--border)"></div>
+        </div>
+      } @else if (stats(); as data) {
+        <div class="mt-8">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <span class="text-sm text-(--text-secondary)"> Account availability </span>
+
+            <span class="text-sm font-semibold tabular-nums"> {{ data.totalUsers }} total </span>
+          </div>
+
+          <div
+            class="flex h-3 w-full overflow-hidden rounded-full bg-(--border)"
+            role="img"
+            [attr.aria-label]="
+              activeUserPercentage() +
+              '% active users and ' +
+              inactiveUserPercentage() +
+              '% inactive users'
+            "
+          >
+            <div
+              class="h-full animate-grow-bar rounded-l-full bg-(--success) transition-all duration-700"
+              [style.width.%]="activeUserPercentage()"
+            ></div>
+
+            <div
+              class="h-full animate-grow-bar bg-(--danger) transition-all duration-700"
+              [style.width.%]="inactiveUserPercentage()"
+            ></div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="rounded-xl border border-(--border) p-4">
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-(--success)"></span>
+                <span class="text-sm text-(--text-secondary)"> Active accounts </span>
+              </div>
+
+              <p class="mt-3 text-2xl font-bold tabular-nums">
+                {{ data.activeUsers }}
+              </p>
+
+              <p class="mt-1 text-xs text-(--text-secondary)">
+                {{ activeUserPercentage() }}% of all users
+              </p>
+            </div>
+
+            <div class="rounded-xl border border-(--border) p-4">
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-(--danger)"></span>
+                <span class="text-sm text-(--text-secondary)"> Inactive accounts </span>
+              </div>
+
+              <p class="mt-3 text-2xl font-bold tabular-nums">
+                {{ data.inactiveUsers }}
+              </p>
+
+              <p class="mt-1 text-xs text-(--text-secondary)">
+                {{ inactiveUserPercentage() }}% of all users
+              </p>
+            </div>
+          </div>
+
+          @if (data.totalUsers === 0) {
+            <p class="mt-4 text-sm text-(--text-secondary)">No registered users to display yet.</p>
+          }
+        </div>
+      }
+    </article>
+
+    <!-- quick actions -->
+    <article
+      class="animate-fade-left rounded-2xl border border-(--border) bg-(--bg-secondary) p-6 xl:col-span-2"
+    >
+      <div class="flex items-center gap-3">
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent)"
+        >
+          <svg lucideShieldCheck [size]="21"></svg>
+        </span>
+
+        <div>
+          <h3 class="font-bold">Quick Actions</h3>
+          <p class="mt-1 text-xs text-(--text-secondary)">Common administration tasks</p>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-3">
+        <a
+          routerLink="/admin/users"
+          class="group flex items-center gap-3 rounded-xl border border-(--border) p-4 transition-all duration-200 hover:border-(--accent)/50 hover:bg-(--accent)/5"
+        >
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent)"
+          >
+            <svg lucideUsers [size]="20"></svg>
+          </span>
+
+          <span class="min-w-0 flex-1">
+            <span class="block text-sm font-semibold"> Manage Users </span>
+            <span class="mt-1 block text-xs text-(--text-secondary)">
+              Search and manage user accounts
+            </span>
+          </span>
+
+          <svg
+            lucideArrowUpRight
+            [size]="18"
+            class="shrink-0 text-(--text-secondary) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--accent)"
+          ></svg>
+        </a>
+
+        <a
+          routerLink="/dashboard/overview"
+          class="group flex items-center gap-3 rounded-xl border border-(--border) p-4 transition-all duration-200 hover:border-(--accent)/50 hover:bg-(--accent)/5"
+        >
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--accent)/15 text-(--accent)"
+          >
+            <svg lucideChartNoAxesCombined [size]="20"></svg>
+          </span>
+
+          <span class="min-w-0 flex-1">
+            <span class="block text-sm font-semibold"> Finance Dashboard </span>
+            <span class="mt-1 block text-xs text-(--text-secondary)">
+              Return to your personal finances
+            </span>
+          </span>
+
+          <svg
+            lucideArrowUpRight
+            [size]="18"
+            class="shrink-0 text-(--text-secondary) transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--accent)"
+          ></svg>
+        </a>
+      </div>
+    </article>
+  </section>
+</div>
