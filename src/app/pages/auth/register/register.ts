@@ -13,9 +13,10 @@ import {
   noWhitespaceValidator,
   passwordMatchValidator,
 } from '../../../core/validators/auth.validators';
+import { GoogleSignIn } from '../../../shared/google-sign-in/google-sign-in';
 
 @Component({
-  imports: [Navbar, RouterLink, ReactiveFormsModule],
+  imports: [Navbar, RouterLink, ReactiveFormsModule, GoogleSignIn],
   selector: 'app-register',
   styleUrl: './register.css',
   templateUrl: './register.html',

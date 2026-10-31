@@ -36,6 +36,17 @@ export class AuthService {
     });
   }
 
+  // google login
+  googleLoginAPI(credential: string) {
+    return this.http.post<LoginResponse>(
+      `${this.apiUrl}/auth/google`,
+      { credential },
+      {
+        withCredentials: true,
+      },
+    );
+  }
+
   // logout
   logoutAPI() {
     return this.http.post<{ success: boolean; message: string }>(

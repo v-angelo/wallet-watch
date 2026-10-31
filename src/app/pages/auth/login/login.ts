@@ -12,9 +12,11 @@ import { ToastService } from '../../../core/services/toast.service';
 
 import { noWhitespaceValidator } from '../../../core/validators/auth.validators';
 
+import { GoogleSignIn } from '../../../shared/google-sign-in/google-sign-in';
+
 @Component({
   selector: 'app-login',
-  imports: [Navbar, RouterLink, ReactiveFormsModule],
+  imports: [Navbar, RouterLink, ReactiveFormsModule, GoogleSignIn],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

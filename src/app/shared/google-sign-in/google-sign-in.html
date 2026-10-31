@@ -1,0 +1,19 @@
+<div class="space-y-5">
+  <!-- divider -->
+  <div class="flex items-center gap-4">
+    <div class="h-px flex-1 bg-(--border)"></div>
+
+    <span class="text-sm text-(--text-secondary)"> OR </span>
+
+    <div class="h-px flex-1 bg-(--border)"></div>
+  </div>
+
+  <!-- google button -->
+  <div class="flex justify-center">
+    <div #googleButton></div>
+  </div>
+
+  @if (isLoading()) {
+    <p class="text-center text-sm text-(--text-secondary)">Signing in with Google...</p>
+  }
+</div>
