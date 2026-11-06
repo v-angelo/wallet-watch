@@ -119,19 +119,36 @@
 
             <button
               type="button"
+              (click)="openForgotPassword()"
               class="text-sm text-(--accent) transition-colors hover:text-(--accent-hover)"
             >
               Forgot password?
             </button>
           </div>
 
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            placeholder="Enter your password"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
-          />
+          <div class="relative">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 pr-12 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+            />
+
+            <button
+              type="button"
+              (click)="showPassword.update((value) => !value)"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+              class="absolute top-1/2 right-4 -translate-y-1/2 text-(--text-secondary) transition-colors hover:text-(--accent)"
+            >
+              @if (showPassword()) {
+                <svg lucideEyeOff [size]="19"></svg>
+              } @else {
+                <svg lucideEye [size]="19"></svg>
+              }
+            </button>
+          </div>
 
           @if (f.password.touched && f.password.invalid) {
             <p class="mt-1 text-sm text-(--danger)">
@@ -173,3 +190,10 @@
     </div>
   </section>
 </section>
+
+@if (showForgotPassword()) {
+  <app-forgot-password
+    (closed)="showForgotPassword.set(false)"
+    (submitted)="onForgotPasswordSubmitted()"
+  />
+}

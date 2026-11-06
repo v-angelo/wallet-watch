@@ -7,6 +7,10 @@ import {
   RegisterRequest,
   LoginRequest,
   LoginResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from '../models/auth.model';
 
 import { environment } from '../../../environments/environment';
@@ -109,5 +113,18 @@ export class AuthService {
     });
 
     return this.authInitialization;
+  }
+
+  // forgot password
+  forgotPasswordAPI(data: ForgotPasswordRequest) {
+    return this.http.post<ForgotPasswordResponse>(`${this.apiUrl}/auth/forgot-password`, data);
+  }
+
+  // reset password
+  resetPasswordAPI(token: string, data: ResetPasswordRequest) {
+    return this.http.post<ResetPasswordResponse>(
+      `${this.apiUrl}/auth/reset-password/${encodeURIComponent(token)}`,
+      data,
+    );
   }
 }

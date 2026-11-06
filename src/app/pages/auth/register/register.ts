@@ -13,10 +13,12 @@ import {
   noWhitespaceValidator,
   passwordMatchValidator,
 } from '../../../core/validators/auth.validators';
+
 import { GoogleSignIn } from '../../../shared/google-sign-in/google-sign-in';
+import { LucideEye, LucideEyeOff } from '@lucide/angular';
 
 @Component({
-  imports: [Navbar, RouterLink, ReactiveFormsModule, GoogleSignIn],
+  imports: [Navbar, RouterLink, ReactiveFormsModule, GoogleSignIn, LucideEye, LucideEyeOff],
   selector: 'app-register',
   styleUrl: './register.css',
   templateUrl: './register.html',
@@ -28,15 +30,18 @@ export class Register {
 
   private readonly router = inject(Router);
 
+  private toast = inject(ToastService);
+
   isLoading = signal(false);
 
-  private toast = inject(ToastService);
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
 
   registerForm = this.fb.group(
     {
       username: ['', [Validators.required, nameValidator]],
       email: ['', [Validators.required, noWhitespaceValidator, Validators.email]],
-      password: ['', [Validators.required, noWhitespaceValidator, Validators.minLength(6)]],
+      password: ['', [Validators.required, noWhitespaceValidator, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, noWhitespaceValidator]],
     },
     {

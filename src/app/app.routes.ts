@@ -20,6 +20,7 @@ import { AdminOverview } from './layouts/admin/admin-overview/admin-overview';
 import { AdminUsers } from './layouts/admin/admin-users/admin-users';
 
 import { Pnf } from './pages/pnf/pnf';
+import { ResetPassword } from './pages/auth/reset-password/reset-password';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,11 @@ export const routes: Routes = [
     path: 'register',
     component: Register,
     canActivate: [guestGuard],
+  },
+
+  {
+    path: 'reset-password',
+    component: ResetPassword,
   },
 
   {

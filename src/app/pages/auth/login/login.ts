@@ -13,10 +13,20 @@ import { ToastService } from '../../../core/services/toast.service';
 import { noWhitespaceValidator } from '../../../core/validators/auth.validators';
 
 import { GoogleSignIn } from '../../../shared/google-sign-in/google-sign-in';
+import { ForgotPassword } from './forgot-password/forgot-password';
+import { LucideEye, LucideEyeOff } from '@lucide/angular';
 
 @Component({
   selector: 'app-login',
-  imports: [Navbar, RouterLink, ReactiveFormsModule, GoogleSignIn],
+  imports: [
+    Navbar,
+    RouterLink,
+    ReactiveFormsModule,
+    GoogleSignIn,
+    ForgotPassword,
+    LucideEye,
+    LucideEyeOff,
+  ],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -30,6 +40,11 @@ export class Login {
   private router = inject(Router);
 
   isLoading = signal(false);
+
+  showPassword = signal(false);
+
+  showForgotPassword = signal(false);
+  showForgotPasswordSuccess = signal(false);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, noWhitespaceValidator, Validators.email]],
@@ -80,5 +95,20 @@ export class Login {
           this.toast.error(error.error?.message ?? 'Invalid email or password.');
         },
       });
+  }
+
+  openForgotPassword(): void {
+    this.showForgotPassword.set(true);
+    this.showForgotPasswordSuccess.set(false);
+  }
+
+  onForgotPasswordSubmitted(): void {
+    this.showForgotPassword.set(false);
+    this.showForgotPasswordSuccess.set(true);
+
+    this.toast.success(
+      'If an account exists with that email address, you will receive a password reset link shortly.',
+      5000,
+    );
   }
 }

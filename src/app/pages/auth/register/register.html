@@ -142,13 +142,29 @@
         <div>
           <label for="password" class="mb-2 block text-sm font-medium"> Password </label>
 
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            placeholder="Create a password"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
-          />
+          <div class="relative">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Create a password"
+              autocomplete="new-password"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 pr-12 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+            />
+
+            <button
+              type="button"
+              (click)="showPassword.update((value) => !value)"
+              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+              class="absolute top-1/2 right-4 -translate-y-1/2 text-(--text-secondary) transition-colors hover:text-(--accent)"
+            >
+              @if (showPassword()) {
+                <svg lucideEyeOff [size]="19"></svg>
+              } @else {
+                <svg lucideEye [size]="19"></svg>
+              }
+            </button>
+          </div>
 
           @if (f.password.touched && f.password.errors) {
             <p class="mt-1 text-sm text-(--danger)">
@@ -157,7 +173,7 @@
               }
 
               @if (f.password.errors['minlength']) {
-                Password must be at least 6 characters.
+                Password must be at least 8 characters.
               }
             </p>
           }
@@ -169,13 +185,29 @@
             Confirm Password
           </label>
 
-          <input
-            id="confirmPassword"
-            type="password"
-            formControlName="confirmPassword"
-            placeholder="Confirm your password"
-            class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
-          />
+          <div class="relative">
+            <input
+              id="confirmPassword"
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="Confirm your password"
+              autocomplete="new-password"
+              class="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-4 py-3.5 pr-12 transition duration-200 outline-none placeholder:text-(--text-secondary)/60 focus:border-(--accent)"
+            />
+
+            <button
+              type="button"
+              (click)="showConfirmPassword.update((value) => !value)"
+              [attr.aria-label]="showConfirmPassword() ? 'Hide password' : 'Show password'"
+              class="absolute top-1/2 right-4 -translate-y-1/2 text-(--text-secondary) transition-colors hover:text-(--accent)"
+            >
+              @if (showConfirmPassword()) {
+                <svg lucideEyeOff [size]="19"></svg>
+              } @else {
+                <svg lucideEye [size]="19"></svg>
+              }
+            </button>
+          </div>
 
           @if (registerForm.hasError('passwordMismatch') && f.confirmPassword.touched) {
             <p class="mt-1 text-sm text-(--danger)">Passwords do not match.</p>
